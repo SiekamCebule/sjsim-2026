@@ -1,0 +1,30 @@
+{
+  "name": "sjsim-2026",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present",
+    "dev": "npm run dev --workspace @sjsim/app",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier \"packages/**/*.{ts,tsx,js,jsx,json,md,css}\" --check",
+    "format:write": "prettier \"packages/**/*.{ts,tsx,js,jsx,json,md,css}\" --write"
+  },
+  "engines": {
+    "node": ">=20 <21"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  }
+}

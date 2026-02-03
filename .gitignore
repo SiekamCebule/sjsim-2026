@@ -1,0 +1,9 @@
+node_modules
+dist
+out
+build
+packages/*/dist
+packages/*/node_modules
+*.log
+.DS_Store
+*.lock

@@ -1,0 +1,25 @@
+{
+  "name": "@sjsim/app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"npm run dev:ui\" \"npm run dev:tsc\" \"npm run dev:electron\"",
+    "dev:ui": "npm run dev --workspace @sjsim/ui",
+    "dev:tsc": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "dev:electron": "wait-on http://localhost:5173 dist/main.js && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron .",
+    "build": "tsc -p tsconfig.json",
+    "clean": "tsc -p tsconfig.json --build --clean",
+    "lint": "eslint \"src/**/*.ts\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "electron": "^28.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "wait-on": "^7.2.0"
+  }
+}

@@ -1,0 +1,87 @@
+/**
+ * Design system — Sj.Sim Predazzo Edition
+ * Jedno miejsce: kolory, typografia, odstępy, obramowania.
+ * Zgodne z REQUIREMENTS.md: zimno, olimpijsko, ciemno.
+ */
+
+:root {
+  /* ——— Typography (IBM Plex Sans) ——— */
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.5rem;
+
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  /* ——— Colors ——— */
+  /* Tło: very dark navy */
+  --color-bg: #0a1628;
+  --color-bg-overlay: rgba(10, 22, 40, 0.82);
+
+  /* Surface: slightly lighter navy */
+  --color-surface: #0f2847;
+  --color-surface-elevated: #132f52;
+  /* Hover: solid (bez przeświecania) */
+  --color-surface-hover: #163259;
+  --color-surface-hover-primary: #143052;
+
+  /* Text: off-white + muted gray */
+  --color-text: #f0f4f8;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+
+  /* Primary: icy blue / alpine blue */
+  --color-primary: #7dd3fc;
+  --color-primary-muted: #38bdf8;
+  --color-primary-subtle: rgba(125, 211, 252, 0.15);
+
+  /* Secondary: olympic red */
+  --color-accent: #e11d48;
+  --color-accent-muted: #f43f5e;
+  --color-accent-subtle: rgba(225, 29, 72, 0.2);
+
+  /* Data (używane w tabelach / wynikach) */
+  --color-data-positive: #22c55e;
+  --color-data-neutral: #f59e0b;
+  --color-data-negative: #ef4444;
+
+  /* ——— Borders ——— */
+  /* Cienkie bordery zamiast cieni (REQUIREMENTS) */
+  --border-width: 1px;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color-strong: rgba(255, 255, 255, 0.18);
+
+  /* Mało rounded (REQUIREMENTS) */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+
+  /* ——— Spacing ——— */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* ——— Transitions ——— */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+}
