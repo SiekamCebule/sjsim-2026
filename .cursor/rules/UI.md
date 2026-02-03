@@ -15,3 +15,4 @@
 - Cienkie bordery zamiast cieni
 - Mało efektu rounded
 - Nie używaj gradientów, chyba że w kilku miejscach w aplikacji, gdzie zrobi to efekt "wow" — bez dużego nasycenia; tylko tam, gdzie nie ma danych.
+- Mają być płynne animacje, ale tylko te schludne

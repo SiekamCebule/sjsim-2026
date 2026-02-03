@@ -1,0 +1,14 @@
+Na głównym ekranie Predazzo (dashboardzie) mamy:
+- Informację o ostatnim konkursie (konkurs, nie trening ani seria próbna), jeśli jest. Jeśli nie, pokaż ostatni trening
+- Jeśli już jest powyższy konkurs, to pokaż także ostatni trening, jeśli ostatnimi skokami nie był konkurs.
+- Leci sobie spokojna, inspirująca muzyczka.
+- Jest mały "kącik" z informacją o tym, kto jest "czarnym koniem" (obliczane algorytmem na bazie formy nieznanej przez użytkownika, ale też na bazie konkursów w Willingen (trochę) i szczególnie — wyników już w Predazzo); o tym, kto jest "faworytem"; o tym, kto radzi sobie nadspodziewanie słabo.
+- Informacja nt. następnych skoków
+    - Pogoda: słońce/pochmurno, opady, stopnie celcjusza, wiatr (!!, kierunek ogólny - pod narty/w plecy/boczny i jego siła)
+    - Typ: trening, seria próbna, duety mężczyzn, drużyny mieszane, indywidualny. także informacja o skoczni (HS107/HS141)
+    - Płcie, np. męski, żeński, mieszany
+    - Godzina
+- Przejście do następnego konkursu (przycisk)
+- Pełny harmonogram po lewej stronie. Zbliżające się zawody i te już rozegrane (wyszarzone). Także treningi. Treningi grupowo, że np. x3, jeśli są trzy.
+- W tle skocznia, na którym będzie następny konkurs. Jeśli mają być opady, w menu głównym pada śnieg (animacja taka).
+- Jeśli następne skoki są rano, tło i wszystko ma być jaśniejsze (dalej ciemny motyw — to się nie zmienia!)

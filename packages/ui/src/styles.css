@@ -24,3 +24,29 @@ body {
   width: 100%;
   min-height: 100vh;
 }
+
+/* Globalny, schludny scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-text-subtle) var(--color-surface-elevated);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-surface-elevated);
+  border-radius: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-text-subtle);
+  border-radius: 6px;
+  border: 2px solid var(--color-surface-elevated);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}

@@ -14,12 +14,10 @@
 .main-menu__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    160deg,
-    var(--color-bg-overlay) 0%,
-    rgba(10, 22, 40, 0.75) 50%,
-    rgba(10, 22, 40, 0.88) 100%
-  );
+  background: linear-gradient(160deg,
+      var(--color-bg-overlay) 0%,
+      rgba(10, 22, 40, 0.75) 50%,
+      rgba(10, 22, 40, 0.88) 100%);
   pointer-events: none;
 }
 
@@ -100,6 +98,14 @@
   transition: border-color var(--transition-normal), background var(--transition-normal);
   min-height: 88px;
   border-left: 3px solid var(--border-color);
+  font: inherit;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+}
+
+button.main-menu__card {
+  appearance: none;
 }
 
 .main-menu__card--action {
@@ -180,7 +186,7 @@
   gap: var(--space-2);
 }
 
-.main-menu__save-list > li {
+.main-menu__save-list>li {
   margin: 0;
   padding: 0;
 }

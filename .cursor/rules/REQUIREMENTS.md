@@ -18,7 +18,9 @@ Nie będzie fikcyjnych zawodów kobiet.
         Jeśli Dyrektor: Data rozpoczęcia: (1) od konkursów w Sapporo jest losowa forma i fikcyjne wyniki; (2) od razu Olimpiada.
         Jeśli Trener: powołania własne / powołania prawdziwe
     (Jeśli Trener) 2.3 zacznij od Sapporo (na tej podstawie wybieramy skoczków, których forma może trochę zmienić się w stosunku do rzeczywistości) / powołania na bazie realnej formy, bez symulacji konkursów sprzed Olimpiady; wtedy Olimpiada startuje na bazie realnej klasyfikacji generalnej PŚ "niedotkniętej" fikcyjnymi wynikami kilku konkursów.
+    (Jeśli Dyrektor) 2.3 zacznij od Sapporo / zacznij od Predazzo
     (Jeśli Trener i jeśli bez symulacji Sapporo wzwyż) 2.4 Powołania zawodników
+        UWAGA: każdy kraj ma swój limit skoczków podany w men_limits.csv (zob. SKI_JUMPING_ASSETS.md). Niektóre kraje po prostu nie mają z czego wybierać, bo mają 1-2 skoczków.
     (Jeśli symulacja Sapporo i wzwyż, jeśli Trener) 2.5 Wyniki z Sapporo + zaktualizowana klasyfikacja PŚ.
     (Jeśli symulacja Sapporo i wzwyż, jeśli Dyrektor) 2.5 Wyniki z Sapporo (tylko konkursy główne) i wyniki z Willingen
     (Jeśli symulacja Sapporo i wzwyż, jeśli Trener) 2.6. Powołania zawodników
@@ -32,12 +34,6 @@ Nie będzie fikcyjnych zawodów kobiet.
         - W tym: Prognoza pogody: ilość stopni celcjusza, zachmurzenie/słonecznie, opady i wiatr (pod narty/w plecy/boczny + siła w m/s)
     3.1. Podekran z wynikami — po prostu jasny spis wszystkich zawodów, faktów nt. pogody, listy startowej, szczegółowych wyników i prostą grafiką z tym, kto zdobył medale w tej rywalizacji
 4. Ekran konkursu (!)
-
-# Rozgrywanie konkursu
-W pierwszej serii zawodnicy skaczą w kolejności odwrotnej do miejsc zajmowanych w Pucharze Świata. Skoczkowie bez punktów w PŚ skaczą na samym początku pomieszani losowo w swoim "segmencie bez punktów".
-Dyrektor ma wpływ na belkę, jeśli użytkownik odblokuje to sobie w ekranie konkursu, w jakimś subtelnym miejscu.
-Trener może zażądać obniżenia belki; punkty za belkę będą dodane tylko, gdy zawodnik uzyska co najmniej 95% punktu HS. Trener nie ma wpływu na belkę.
-Zawodnicy mogą zostać zdyskwalifikowani (załóżmy, że 1 na 300 zawodników dostanie "DSQ" przed skokiem, a 1 na 200 po skoku)
 
 # Dodatkowe Funkcje i Uwagi
 - Zapis gry i jego późniejsze wczytanie (SQLite)

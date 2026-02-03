@@ -1,0 +1,91 @@
+Country,Name,Surname
+AUT,Stephan,Embacher
+AUT,Jan,Hoerl
+AUT,Stefan,Kraft
+AUT,Daniel,Tschofenig
+AUT,Manuel,Fettner
+AUT,Jonas,Schuster
+AUT,Maximilian,Ortner
+AUT,Clemens,Aigner
+AUT,Markus,Mueller
+BUL,Vladimir,Zografski
+CHN,Song,Qiwu
+CZE,Roman,Koudelka
+EST,Kaimar,Vagul
+EST,Artti,Aigro
+FIN,Antti,Aalto
+FIN,Niko,Kytosaho
+FIN,Vilho,Palosaari
+FIN,Eetu,Nousiainen
+FIN,Jarkko,Maatta
+FRA,Valentin,Foubert
+FRA,Jules,Chervet
+FRA,Enzo,Milesi
+JPN,Ryoyu,Kobayashi
+JPN,Naoki,Nakamura
+JPN,Ren,Nikaido
+JPN,Yukiya,Sato
+JPN,Noriaki,Kasai
+JPN,Sakutaro,Kobayashi
+JPN,Tomofumi,Naito
+JPN,Keichii,Sato
+JPN,Junshiro,Kobayashi
+CAN,Mackenzie,Boyd-Clowes
+KAZ,Ilya,Miziernykh
+KAZ,Danil,Wasiljew
+KAZ,Sabirzhan,Muminov
+KAZ,Sergey,Tkachenko
+KAZ,Nurshat,Tursunzhanov
+GER,Felix,Hoffmann
+GER,Pius,Paschke
+GER,Philipp,Raimund
+GER,Andreas,Wellinger
+GER,Karl,Geiger
+GER,Luca,Roth
+GER,Ben,Bayer
+NOR,Johann Andre,Forfang
+NOR,Marius,Lindvik
+NOR,Kristoffer Eriksen,Sundal
+NOR,Isak Andreas,Langmo
+NOR,Robin,Pedersen
+NOR,Halvor Egner,Granerud
+NOR,Benjamin,Oestvold
+NOR,Soelve Jokerund,Strand
+POL,Kamil,Stoch
+POL,Kacper,Tomasiak
+POL,Paweł,Wąsek
+POL,Maciej,Kot
+POL,Dawid,Kubacki
+POL,Piotr,Żyła
+POL,Aleksander,Zniszczol
+POL,Klemens,Joniak
+POL,Andrzej,Stękała
+POL,Jakub,Wolny
+ROU,Daniel Andrei,Cacina
+ROU,Mihnea Alexandru,Spulber
+SVK,Hektor,Kapustik
+SLO,Domen,Prevc
+SLO,Anze,Lanisek
+SLO,Timi,Zajc
+SLO,Rok,Oblak
+SLO,Ziga,Jancar
+SLO,Zak,Mogel
+SUI,Gregor,Deschwanden
+SUI,Sandro,Hauswirth
+SUI,Felix,Trunz
+SUI,Simon,Ammann
+SUI,Yannick,Wasser
+SUI,Killian,Peier
+SUI,Juri,Kesseli
+TUR,Fatih Arda,Ipcioglu
+TUR,Muhammed Ali,Bedir
+UKR,Vitaliy,Kalinichenko
+UKR,Yevhen,Marusiak
+USA,Kevin,Bickner
+USA,Jason,Colby
+USA,Tate,Frantz
+USA,Andrew,Urlaub
+USA,Erik,Belshaw
+ITA,Giovanni,Bresadola
+ITA,Francesco,Cecon
+ITA,Alex,Insam

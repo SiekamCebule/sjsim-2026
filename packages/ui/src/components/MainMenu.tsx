@@ -3,7 +3,11 @@ import menuBg from '@assets/predazzo.jpg';
 
 const APP_VERSION = '1.0.0';
 
-export const MainMenu = (): JSX.Element => (
+interface MainMenuProps {
+  onNewGame: () => void;
+}
+
+export const MainMenu = ({ onNewGame }: MainMenuProps): JSX.Element => (
   <div
     className="main-menu"
     style={{ backgroundImage: `url(${menuBg})` }}
@@ -25,7 +29,11 @@ export const MainMenu = (): JSX.Element => (
     </header>
 
     <section className="main-menu__content">
-      <a href="#new" className="main-menu__card main-menu__card--action">
+      <button
+        type="button"
+        className="main-menu__card main-menu__card--action"
+        onClick={onNewGame}
+      >
         <span className="main-menu__card-icon" aria-hidden>
           <PlayIcon />
         </span>
@@ -35,7 +43,7 @@ export const MainMenu = (): JSX.Element => (
             Powołaj swoją kadrę jako Trener lub wciel się w rolę Dyrektora konkursów w Predazzo.
           </p>
         </div>
-      </a>
+      </button>
       <div className="main-menu__load-panel">
         <h2 className="main-menu__load-title">
           <span className="main-menu__load-title-icon" aria-hidden>
