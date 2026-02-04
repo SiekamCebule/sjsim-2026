@@ -66,6 +66,78 @@
   align-self: start;
 }
 
+/* Ekran powołań z podglądem Sapporo */
+.game-config--with-sapporo {
+  grid-template-columns: 1fr;
+}
+
+/* Powołania bez tabeli Sapporo — treść na całą szerokość ekranu */
+.game-config--callups-only .game-config__with-preview {
+  grid-template-columns: 1fr;
+}
+
+.game-config--callups-only .game-config__content {
+  max-width: none;
+  width: 100%;
+  align-self: stretch;
+}
+
+/* Gdy treść zawiera siatkę powołań — na całą dostępną szerokość (także z podglądem Sapporo) */
+.game-config__content:has(.callups-all-teams) {
+  max-width: none;
+  width: 100%;
+  align-self: stretch;
+}
+
+.game-config__content:has(.callups-all-teams) .game-config__content--step {
+  max-width: none;
+}
+
+.game-config__with-preview {
+  display: grid;
+  grid-template-columns: minmax(340px, 650px) 1fr;
+  gap: var(--space-6);
+  min-height: 0;
+  align-content: stretch;
+}
+
+/* Nagłówek z przyciskami Wstecz/Kontynuuj u góry */
+.game-config__header--with-actions {
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.game-config__header--with-actions .game-config__title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.game-config__step-actions--header {
+  margin-top: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.game-config__sapporo-aside {
+  min-width: 0;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+}
+
+@media (max-width: 900px) {
+  .game-config__with-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .game-config__sapporo-aside {
+    min-height: 480px;
+    max-height: 75vh;
+  }
+}
+
 .game-config__section {
   margin: 0;
   padding: 0;
@@ -127,6 +199,12 @@
   border-left-color: var(--color-primary-muted);
   border-color: rgba(56, 189, 248, 0.35);
   background: var(--color-surface-hover-primary);
+}
+
+.game-config__option--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .game-config__option-input {
@@ -192,6 +270,14 @@
 .game-config__btn--primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  background: var(--color-text-subtle, #94a3b8);
+  border-color: var(--color-text-subtle, #94a3b8);
+  color: var(--color-bg);
+}
+
+.game-config__btn--primary:disabled:hover {
+  background: var(--color-text-subtle, #94a3b8);
+  border-color: var(--color-text-subtle, #94a3b8);
 }
 
 .game-config__btn--secondary {
@@ -207,6 +293,10 @@
 
 .game-config__content--step {
   max-width: 520px;
+}
+
+.game-config--callups-only .game-config__content--step {
+  max-width: none;
 }
 
 .game-config__content--wide {
@@ -416,4 +506,55 @@
 
 .game-config__jumper-row--readonly {
   cursor: default;
+}
+
+/* Powołania kadr – siatka na całą szerokość; tyle kolumn, ile się zmieści (np. 4–5 na dużym ekranie) */
+.callups-all-teams {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.callups-team {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  padding: var(--space-3) var(--space-4);
+  min-width: 0;
+}
+
+.callups-team__header {
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.callups-team__country {
+  letter-spacing: 0.01em;
+}
+
+.callups-team__names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.callups-team__name {
+  white-space: nowrap;
+}
+
+.callups-team__name::after {
+  content: ',';
+  margin-left: -0.15em;
+}
+
+.callups-team__name:last-child::after {
+  content: '';
 }

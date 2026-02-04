@@ -31,3 +31,14 @@ At the root you can run:
 - `npm run lint` – ESLint for every workspace.
 - `npm run format[:write]` – Prettier check or write mode.
 - `npm run clean` – clean build outputs.
+
+## Logi deweloperskie
+
+`console.log` z aplikacji (UI + core przy wywołaniach z przeglądarki) **nie** trafia do terminala, w którym działa `npm run dev`. Kod działa w przeglądarce (lub w oknie Electron).
+
+**Gdzie oglądać logi:**
+
+- **Electron** (`npm run dev`): w oknie aplikacji **View → Toggle Developer Tools** (lub skrót, np. Ctrl+Shift+I / Cmd+Option+I), potem zakładka **Console**.
+- **Sam Vite / przeglądarka**: uruchom UI (`cd packages/ui && npm run dev`), otwórz `http://localhost:5173` w Chrome/Firefox, naciśnij **F12** → zakładka **Console**.
+
+W konsoli szukaj wpisów z prefiksem `[SJSIM]` (symulacja skoków, 3 na 50) oraz `[SJSIM-CALLUPS]` (score’y powołań botów).

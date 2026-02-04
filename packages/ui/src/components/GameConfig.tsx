@@ -16,14 +16,16 @@ export type CoachCallUps = 'own' | 'real';
 export type CoachStart = 'sapporo' | 'real-form';
 
 export interface GameConfigState {
-  mode: GameMode;
-  directorStart: DirectorStart;
-  coachCallUps: CoachCallUps;
-  coachStart: CoachStart;
+  mode: GameMode | null;
+  directorStart: DirectorStart | null;
+  coachCallUps: CoachCallUps | null;
+  coachStart: CoachStart | null;
   /** Wybrany kraj (kadra użytkownika). Tylko gdy powołania własne lub real-form. */
   selectedCountry: string | null;
   /** Wybrani skoczkowie (mężczyźni) dla selectedCountry. Pusta = realny skład. */
   selectedJumpers: Jumper[];
+  /** Powołania botów dla kadr (kod kraju → skoczkowie). Ustawiane po Sapporo. */
+  allCallups?: Record<string, Jumper[]>;
 }
 
 type StepId =
@@ -36,12 +38,13 @@ type StepId =
   | 'done';
 
 const defaultConfig: GameConfigState = {
-  mode: 'director',
-  directorStart: 'sapporo',
-  coachCallUps: 'real',
-  coachStart: 'sapporo',
+  mode: null,
+  directorStart: null,
+  coachCallUps: null,
+  coachStart: null,
   selectedCountry: null,
-  selectedJumpers: []
+  selectedJumpers: [],
+  allCallups: undefined
 };
 
 interface GameConfigProps {
@@ -58,11 +61,11 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
   const nextStep = useMemo((): StepId | null => {
     switch (currentStep) {
       case 'mode':
-        return config.mode === 'director' ? 'director-start' : 'coach-callups';
+        return config.mode === 'director' ? 'director-start' : config.mode === 'coach' ? 'coach-callups' : null;
       case 'director-start':
         return 'done';
       case 'coach-callups':
-        return 'coach-start';
+        return config.coachCallUps === 'real' ? 'callups-country' : 'coach-start';
       case 'coach-start':
         return 'callups-country';
       case 'callups-country':
@@ -72,7 +75,7 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
       default:
         return null;
     }
-  }, [currentStep, config.mode, config.coachStart]);
+  }, [currentStep, config.mode, config.coachStart, config.coachCallUps]);
 
   const goNext = (): void => {
     if (nextStep) setStepHistory((h) => [...h, nextStep]);
@@ -148,12 +151,12 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
         {currentStep === 'director-start' && (
           <StepScreen
             title="Data rozpoczęcia"
-            hint="Od Sapporo: losowa forma i fikcyjne wyniki od konkursów w Sapporo. Od razu Olimpiada: start w Predazzo bez wcześniejszych konkursów."
+            hint="Od Sapporo: wyniki z Sapporo i powołania kadr (algorytm). Od razu Olimpiada: start w Predazzo bez wcześniejszych konkursów."
             options={[
               {
                 value: 'sapporo',
                 title: 'Od konkursów w Sapporo',
-                desc: 'Losowa forma i fikcyjne wyniki od Sapporo.',
+                desc: 'Zobacz wyniki Sapporo, potem powołania wszystkich kadr (wybór algorytmu).',
                 checked: config.directorStart === 'sapporo',
                 icon: <CalendarIcon />
               },
@@ -168,9 +171,18 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
             onSelect={(value) =>
               setConfig((c) => ({ ...c, directorStart: value as DirectorStart }))
             }
-            onNext={goNext}
+            onNext={
+              config.directorStart === 'sapporo'
+                ? handleStart
+                : config.directorStart === 'olympics'
+                  ? handleStart
+                  : goNext
+            }
             canProceed={!!config.directorStart}
             onBack={goBack}
+            nextButtonLabel={
+              config.directorStart === 'sapporo' ? 'Zobacz wyniki Sapporo' : 'Dalej'
+            }
           />
         )}
 
@@ -189,14 +201,21 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
               {
                 value: 'real',
                 title: 'Kadra jak w rzeczywistości',
-                desc: 'Skład taki jak w realnych powołaniach.',
+                desc: 'Skład taki jak w realnych powołaniach. Start od razu od Predazzo.',
                 checked: config.coachCallUps === 'real',
                 icon: <ListIcon />
               }
             ]}
-            onSelect={(value) =>
-              setConfig((c) => ({ ...c, coachCallUps: value as CoachCallUps }))
-            }
+            onSelect={(value) => {
+              const callUps = value as CoachCallUps;
+              setConfig((c) => ({
+                ...c,
+                coachCallUps: callUps,
+                ...(callUps === 'real'
+                  ? { coachStart: 'real-form' as CoachStart }
+                  : { coachStart: null })
+              }));
+            }}
             onNext={goNext}
             canProceed={!!config.coachCallUps}
             onBack={goBack}
@@ -236,8 +255,17 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
           <CallupsCountryStep
             config={config}
             setConfig={setConfig}
-            onNext={goNext}
+            onNext={
+              config.coachStart === 'sapporo'
+                ? () => handleStart()
+                : goNext
+            }
             onBack={goBack}
+            nextButtonLabel={
+              config.coachStart === 'sapporo'
+                ? 'Zobacz wyniki Sapporo'
+                : undefined
+            }
           />
         )}
 
@@ -247,7 +275,7 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
             limit={getLimitForCountry(config.selectedCountry)}
             realRoster={getRealRosterForCountry(config.selectedCountry)}
             allJumpers={getJumpersByCountry(config.selectedCountry)}
-            coachCallUps={config.coachCallUps}
+            coachCallUps={config.coachCallUps ?? 'own'}
             selectedJumpers={config.selectedJumpers}
             setSelectedJumpers={(jumpers) =>
               setConfig((c) => ({ ...c, selectedJumpers: jumpers }))
@@ -297,6 +325,8 @@ interface StepOption {
   desc: string;
   checked: boolean;
   icon?: JSX.Element;
+  /** Zablokowana – nie można wybrać. */
+  disabled?: boolean;
 }
 
 interface StepScreenProps {
@@ -307,6 +337,8 @@ interface StepScreenProps {
   onNext: () => void;
   canProceed: boolean;
   onBack: () => void;
+  /** Gdy ustawione (np. "Rozpocznij rozgrywkę"), przycisk ma tę etykietę zamiast "Dalej". */
+  nextButtonLabel?: string;
 }
 
 const StepScreen = ({
@@ -316,7 +348,8 @@ const StepScreen = ({
   onSelect,
   onNext,
   canProceed,
-  onBack
+  onBack,
+  nextButtonLabel = 'Dalej'
 }: StepScreenProps): JSX.Element => (
   <div className="game-config__step">
     <h2 className="game-config__step-title">{title}</h2>
@@ -325,14 +358,15 @@ const StepScreen = ({
       {options.map((opt) => (
         <label
           key={opt.value}
-          className={`game-config__option ${opt.checked ? 'game-config__option--checked' : ''}`}
+          className={`game-config__option ${opt.checked ? 'game-config__option--checked' : ''} ${opt.disabled ? 'game-config__option--disabled' : ''}`}
         >
           <input
             type="radio"
             name={title}
             value={opt.value}
             checked={opt.checked}
-            onChange={() => onSelect(opt.value)}
+            disabled={opt.disabled}
+            onChange={() => !opt.disabled && onSelect(opt.value)}
             className="game-config__option-input"
           />
           {opt.icon && <span className="game-config__option-icon">{opt.icon}</span>}
@@ -357,7 +391,7 @@ const StepScreen = ({
         onClick={onNext}
         disabled={!canProceed}
       >
-        Dalej
+        {nextButtonLabel}
       </button>
     </div>
   </div>
@@ -368,13 +402,16 @@ interface CallupsCountryStepProps {
   setConfig: React.Dispatch<React.SetStateAction<GameConfigState>>;
   onNext: () => void;
   onBack: () => void;
+  /** Gdy ustawione (np. "Zobacz wyniki Sapporo"), przycisk Dalej ma tę etykietę. */
+  nextButtonLabel?: string;
 }
 
 const CallupsCountryStep = ({
   config,
   setConfig,
   onNext,
-  onBack
+  onBack,
+  nextButtonLabel
 }: CallupsCountryStepProps): JSX.Element => {
   const countries = useMemo(() => getMenCountries(), []);
   const previewJumpers = config.selectedCountry
@@ -383,7 +420,9 @@ const CallupsCountryStep = ({
   const hintText =
     config.coachStart === 'real-form'
       ? 'Kadra, którą będziesz prowadzić. Skład żeński jest ustalony z góry. Wybierz kraj — w następnym kroku zatwierdzisz skład.'
-      : 'Kadra, którą będziesz prowadzić. Powołania będą po wynikach konkursów; na razie wybierz kraj. Skład żeński jest ustalony z góry.';
+      : config.coachStart === 'sapporo'
+        ? 'Kadra, którą będziesz prowadzić. Po wyborze kraju zobaczysz wyniki z Sapporo, potem powołasz skład na Predazzo.'
+        : 'Kadra, którą będziesz prowadzić. Powołania będą po wynikach konkursów; na razie wybierz kraj. Skład żeński jest ustalony z góry.';
 
   return (
     <div className="game-config__step">
@@ -440,7 +479,7 @@ const CallupsCountryStep = ({
           onClick={onNext}
           disabled={!config.selectedCountry}
         >
-          Dalej
+          {nextButtonLabel ?? 'Dalej'}
         </button>
       </div>
     </div>
@@ -543,7 +582,7 @@ const CallupsListStep = ({
           disabled={!canProceed}
           title={!canProceed && isOwn ? `Wybierz ${requiredCount - current.length} skoczków więcej` : undefined}
         >
-          Dalej
+          Rozpocznij grę
         </button>
       </div>
     </div>

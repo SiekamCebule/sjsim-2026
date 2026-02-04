@@ -1,9 +1,23 @@
+# Dependencies
 node_modules
+.pnpm-store
+
+# Build / cache
 dist
 out
 build
 packages/*/dist
 packages/*/node_modules
-*.log
+*.tsbuildinfo
+
+# Lockfiles (uncomment if you want to ignore; many projects commit pnpm-lock.yaml)
+# *.lock
+# pnpm-lock.yaml
+
+# OS / editor
 .DS_Store
-*.lock
+*.log
+Thumbs.db
+
+# Optional: Cursor IDE rules (uncomment if you don't want to commit them)
+# .cursor

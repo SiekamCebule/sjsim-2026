@@ -4,6 +4,7 @@ W tym pliku znajdują się wymagania wysokiego poziomu, które musisz spełnić.
 Sj.Sim 2026 Predazzo Edition to okienkowy symulator wyników skoków narciarskich z motywem przewodnim Igrzysk Olimpijskich 2026 odbywających się w Cortinie d'Ampezzo (oficjalnie brak powiązań z Igrzyskami ze względów prawnych).
 W Predazzo znajdują się dwie skocznie: K98/HS107 i K128/HS141.
 W grze istnieje także skocznia w Sapporo (K123/HS137) i w Willingen (K130/HS147). Chodzi o to, że przed Igrzyskami rozgrywane są tam konkursy Pucharu Świata w Sapporo i w Willingen. Gra dysponuje realną klasyfikacją Pucharu Świata przed konkursami w Sapporo, po czym jest ona już "zmieniana" na podstawie konkursów w Sapporo i w Willingen. Po Sapporo trzeba podać powołania, jeśli użytkownik chce powoływać własnych skoczków, a nie jak w rzeczywistości. Sapporo będzie symulowane szczegółowo, tzn. treningi i serie próbne też, za to Willingen — tylko konkursy dla podglądu i zaktualizowania klasyfikacji PŚ.
+UWAGA: w kodzie bez zmianek o Igrzyskach z racji kwestii prawnych.
 
 # Kwestia skoków kobiet
 Nie będzie fikcyjnych zawodów kobiet.
@@ -25,14 +26,8 @@ Nie będzie fikcyjnych zawodów kobiet.
     (Jeśli symulacja Sapporo i wzwyż, jeśli Dyrektor) 2.5 Wyniki z Sapporo (tylko konkursy główne) i wyniki z Willingen
     (Jeśli symulacja Sapporo i wzwyż, jeśli Trener) 2.6. Powołania zawodników
     (Jeśli symulacja Sapporo i wzwyż, jeśli Dyrektor) 2.6. Podgląd powołanych zawodników. Jeśli od Sapporo, każda kadra nieprowadzona przez użytkownika powołuje skoczków przez algorytm AI (najlepsi skoczkowie + nuta losowości); jeśli od razu Olimpiada, bierzemy oryginalne powołania + ewentualnie zmiany w kadrze użytkownika
-3. Dashboard Olimpiady (główny "ekran gry")
-    - Spokojna, lekko inspirująca muzyka
-    - Klimatyczne tło ze skocznią, na której będą następne zawody. Losowo albo pada śnieg, albo nie pada, albo pada lekko.
-    - Drobna ciekawostka "Faworyt", "Czarny Koń" i trzecie — skoczek który niespodziewanie zawodzi
-    - Tabelka z wynikami (1) ostatnich zawodów (tylko konkursy główne, nawet jeśli drużynowe) i (2) jeśli ostatnie zawody to trening — tabelka także z wynikami tego ostatniego treningu.
-    - Kafelek z informacją o następnych zawodach — która skocznia, czy to trening, czy to seria próbna, czy to konkurs, jaka płeć skacze (lub obie płcie w zawodach mieszanych)
-        - W tym: Prognoza pogody: ilość stopni celcjusza, zachmurzenie/słonecznie, opady i wiatr (pod narty/w plecy/boczny + siła w m/s)
-    3.1. Podekran z wynikami — po prostu jasny spis wszystkich zawodów, faktów nt. pogody, listy startowej, szczegółowych wyników i prostą grafiką z tym, kto zdobył medale w tej rywalizacji
+3. Dashboard Olimpiady (Predazzo) (główny "ekran gry")
+    Sprawdź plik `specific_screens/PREDAZZO_DASHBOARD.md`
 4. Ekran konkursu (!)
 
 # Dodatkowe Funkcje i Uwagi

@@ -2,7 +2,7 @@ men_jumpers_all.csv — wszyscy skoczkowie męscy możliwi do powołania
 men_limits.csv — wszyscy skoczkowie męscy możliwi do powołania
 men_nations_cup_sapporo.csv — stan męskiego Pucharu Narodów przed Sapporo
 men_nations_cup.csv — stan męskiego Pucharu Narodów przed Predazzo
-men_limits.csv — limity skoczków, którzy mogą znaleźć się w kadrach męskich (niewspierane dla kadr żeńskich)
+men_limits.csv — limity skoczków na Predazzo; w Sapporo powołania są dowolne, limity nie obowiązują
 men_teams.csv — prawdziwe powołania męskich kadr na Predazzo
 men_world_cup_sapporo.csv — klasyfikacja męskiego Pucharu Świata przed Sapporo
 men_world_cup.csv — klasyfikacja męskiego Pucharu Świata przed Predazzo

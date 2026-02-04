@@ -1,91 +1,98 @@
-Country,Name,Surname
-AUT,Stephan,Embacher
-AUT,Jan,Hoerl
-AUT,Stefan,Kraft
-AUT,Daniel,Tschofenig
-AUT,Manuel,Fettner
-AUT,Jonas,Schuster
-AUT,Maximilian,Ortner
-AUT,Clemens,Aigner
-AUT,Markus,Mueller
-BUL,Vladimir,Zografski
-CHN,Song,Qiwu
-CZE,Roman,Koudelka
-EST,Kaimar,Vagul
-EST,Artti,Aigro
-FIN,Antti,Aalto
-FIN,Niko,Kytosaho
-FIN,Vilho,Palosaari
-FIN,Eetu,Nousiainen
-FIN,Jarkko,Maatta
-FRA,Valentin,Foubert
-FRA,Jules,Chervet
-FRA,Enzo,Milesi
-JPN,Ryoyu,Kobayashi
-JPN,Naoki,Nakamura
-JPN,Ren,Nikaido
-JPN,Yukiya,Sato
-JPN,Noriaki,Kasai
-JPN,Sakutaro,Kobayashi
-JPN,Tomofumi,Naito
-JPN,Keichii,Sato
-JPN,Junshiro,Kobayashi
-CAN,Mackenzie,Boyd-Clowes
-KAZ,Ilya,Miziernykh
-KAZ,Danil,Wasiljew
-KAZ,Sabirzhan,Muminov
-KAZ,Sergey,Tkachenko
-KAZ,Nurshat,Tursunzhanov
-GER,Felix,Hoffmann
-GER,Pius,Paschke
-GER,Philipp,Raimund
-GER,Andreas,Wellinger
-GER,Karl,Geiger
-GER,Luca,Roth
-GER,Ben,Bayer
-NOR,Johann Andre,Forfang
-NOR,Marius,Lindvik
-NOR,Kristoffer Eriksen,Sundal
-NOR,Isak Andreas,Langmo
-NOR,Robin,Pedersen
-NOR,Halvor Egner,Granerud
-NOR,Benjamin,Oestvold
-NOR,Soelve Jokerund,Strand
-POL,Kamil,Stoch
-POL,Kacper,Tomasiak
-POL,Paweł,Wąsek
-POL,Maciej,Kot
-POL,Dawid,Kubacki
-POL,Piotr,Żyła
-POL,Aleksander,Zniszczol
-POL,Klemens,Joniak
-POL,Andrzej,Stękała
-POL,Jakub,Wolny
-ROU,Daniel Andrei,Cacina
-ROU,Mihnea Alexandru,Spulber
-SVK,Hektor,Kapustik
-SLO,Domen,Prevc
-SLO,Anze,Lanisek
-SLO,Timi,Zajc
-SLO,Rok,Oblak
-SLO,Ziga,Jancar
-SLO,Zak,Mogel
-SUI,Gregor,Deschwanden
-SUI,Sandro,Hauswirth
-SUI,Felix,Trunz
-SUI,Simon,Ammann
-SUI,Yannick,Wasser
-SUI,Killian,Peier
-SUI,Juri,Kesseli
-TUR,Fatih Arda,Ipcioglu
-TUR,Muhammed Ali,Bedir
-UKR,Vitaliy,Kalinichenko
-UKR,Yevhen,Marusiak
-USA,Kevin,Bickner
-USA,Jason,Colby
-USA,Tate,Frantz
-USA,Andrew,Urlaub
-USA,Erik,Belshaw
-ITA,Giovanni,Bresadola
-ITA,Francesco,Cecon
-ITA,Alex,Insam
+Country,Name,Surname, A_Skill, B_Skill, Landing, Form, BonusImportantJumps
+AUT,Stephan,Embacher,90,83,1,70,0
+AUT,Jan,Hoerl,95,84,0,58,-1
+AUT,Stefan,Kraft,87,95,3,35,0
+AUT,Daniel,Tschofenig,92,85,1,55,0
+AUT,Manuel,Fettner,88,79,-1,63,-1
+AUT,Jonas,Schuster,84,74,-1,70,0
+AUT,Maximilian,Ortner,86,75,1,40,1
+AUT,Clemens,Aigner,85,70,0,50,0
+AUT,Markus,Mueller,81,69,0,40,0
+BUL,Vladimir,Zografski,85,72,0,70,1
+CAN,Mackenzie,Boyd-Clowes,75,60,0,35,0
+CHN,Song,Qiwu,60,58,0,50,0
+CZE,Roman,Koudelka,76,68,0,55,0
+CZE,David,Rygl,55,55,0,45,0
+EST,Kaimar,Vagul,59,59,0,50,0
+EST,Artti,Aigro,70,80,-1,30,0
+EST,Andero,Kapp,50,50,0,55,0
+FIN,Antti,Aalto,76,76,0,65,2
+FIN,Niko,Kytosaho,69,83,0,70,0
+FIN,Vilho,Palosaari,70,70,1,30,0
+FIN,Eetu,Nousiainen,60,73,0,30,0
+FIN,Jarkko,Maatta,65,60,0,80,0
+FIN,Tomas,Kuisma,52,55,0,60,0
+FRA,Valentin,Foubert,84,71,1,38,0
+FRA,Jules,Chervet,66,66,0,59,0
+FRA,Enzo,Milesi,67,58,0,56,0
+GER,Felix,Hoffmann,89,80,0,70,-1
+GER,Pius,Paschke,80,82,0,40,1
+GER,Philipp,Raimund,90,79,0,60,-1
+GER,Andreas,Wellinger,90,83,2,20,1
+GER,Karl,Geiger,88,80,1,25,2
+GER,Luca,Roth,75,61,0,45,0
+GER,Ben,Bayer,71,59,0,39,0
+ITA,Giovanni,Bresadola,65,75,0,40,0
+ITA,Francesco,Cecon,69,59,0,30,0
+ITA,Alex,Insam,70,70,1,60,0
+JPN,Ryoyu,Kobayashi,90,90,1,75,1
+JPN,Naoki,Nakamura,83,83,2,80,0
+JPN,Ren,Nikaido,85,85,2,90,1
+JPN,Yukiya,Sato,70,73,0,60,0
+JPN,Noriaki,Kasai,56,67,2,40,0
+JPN,Sakutaro,Kobayashi,77,70,0,50,-1
+JPN,Tomofumi,Naito,76,70,-1,85,1
+JPN,Keiichi,Sato,68,66,0,48,0
+JPN,Junshiro,Kobayashi,69,65,0,55,0
+JPN,Go,Yamamoto,63,64,0,60,0
+KAZ,Ilya,Miziernykh,70,62,1,65,0
+KAZ,Danil,Wasiljew,65,70,0,60,0
+KAZ,Sabirzhan,Muminov,50,38,-2,40,0
+KAZ,Sergey,Tkachenko,45,45,-1,50,0
+KAZ,Nurshat,Tursunzhanov,35,35,-2,50,0
+KAZ,Svyatoslav,Nazarenko,55,60,0,15,0
+KOR,Heung,Chul Choi,50,45,-2,29,0
+NOR,Johann Andre,Forfang,80,92,0,30,-2
+NOR,Marius,Lindvik,85,90,0,39,-1
+NOR,Kristoffer Eriksen,Sundal,84,84,1,60,1
+NOR,Isak Andreas,Langmo,70,76,0,85,-3
+NOR,Robin,Pedersen,70,85,0,50,-1
+NOR,Halvor Egner,Granerud,80,83,0,58,-1
+NOR,Benjamin,Oestvold,70,80,0,70,-2
+NOR,Soelve Jokerund,Strand,70,70,0,60,0
+POL,Kamil,Stoch,83,80,3,30,1
+POL,Kacper,Tomasiak,82,77,1,85,2
+POL,Paweł,Wąsek,80,81,1,35,0
+POL,Maciej,Kot,78,69,0,48,-1
+POL,Dawid,Kubacki,85,76,0,30,0
+POL,Piotr,Żyła,79,83,0,37,2
+POL,Aleksander,Zniszczoł,70,84,0,17,-1
+POL,Klemens,Joniak,73,66,0,60,0
+POL,Andrzej,Stękała,60,70,1,40,0
+POL,Jakub,Wolny,65,76,1,40,0
+ROU,Daniel Andrei,Cacina,68,51,0,50,0
+ROU,Mihnea Alexandru,Spulber,60,50,0,50,0
+SLO,Domen,Prevc,76,98,1,99,0
+SLO,Anze,Lanisek,90,88,2,69,0
+SLO,Timi,Zajc,77,90,1,29,-1
+SLO,Rok,Oblak,73,71,1,89,0
+SLO,Ziga,Jancar,70,70,1,70,0
+SLO,Zak,Mogel,72,72,0,50,0
+SUI,Gregor,Deschwanden,83,80,0,25,0
+SUI,Sandro,Hauswirth,74,76,0,80,-1
+SUI,Felix,Trunz,72,75,0,77,0
+SUI,Simon,Ammann,73,73,-3,49,0
+SUI,Yannick,Wasser,75,68,0,45,0
+SUI,Killian,Peier,74,74,1,40,0
+SUI,Juri,Kesseli,75,75,0,38,0
+SVK,Hektor,Kapustik,67,67,0,67,0
+TUR,Fatih Arda,Ipcioglu,74,60,-2,32,0
+TUR,Muhammed Ali,Bedir,62,52,-1,40,0
+UKR,Vitaliy,Kalinichenko,75,65,0,58,0
+UKR,Yevhen,Marusiak,73,82,0,34,0
+USA,Kevin,Bickner,81,70,-1,25,0
+USA,Jason,Colby,78,78,1,70,0
+USA,Tate,Frantz,76,80,2,18,-1
+USA,Andrew,Urlaub,75,59,-1,45,0
+USA,Erik,Belshaw,70,70,1,36,0
+USA,Decker,Dean,58,58,0,32,0

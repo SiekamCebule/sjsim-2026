@@ -1,0 +1,128 @@
+.team-selection-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 16, 0.75);
+  display: grid;
+  place-items: center;
+  z-index: 40;
+}
+
+.team-selection-dialog {
+  width: min(900px, 95vw);
+  background: rgba(20, 24, 30, 0.96);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  color: var(--color-text);
+}
+
+.team-selection-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.team-selection-dialog__country {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+}
+
+.team-selection-dialog__flag {
+  font-size: 1rem;
+}
+
+.team-selection-dialog__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.2rem;
+}
+
+.team-selection-dialog__panel h3 {
+  margin: 0 0 0.4rem;
+}
+
+.team-selection-dialog__subhint {
+  margin: 0 0 0.7rem;
+  opacity: 0.7;
+  font-size: 0.85rem;
+}
+
+.team-selection-dialog__roster {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.team-selection-dialog__roster-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 15, 20, 0.7);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.team-selection-dialog__roster-btn--selected {
+  border-color: rgba(64, 173, 255, 0.6);
+  color: #9ad7ff;
+}
+
+.team-selection-dialog__lineup {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.6rem;
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background: rgba(16, 20, 26, 0.7);
+}
+
+.team-selection-dialog__lineup-item {
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: grab;
+}
+
+.team-selection-dialog__note {
+  margin: 0.6rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.team-selection-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+}
+
+.team-selection-dialog__btn {
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(18, 22, 28, 0.9);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.team-selection-dialog__btn--primary {
+  background: linear-gradient(135deg, rgba(64, 173, 255, 0.85), rgba(78, 196, 255, 0.85));
+  border: none;
+  color: #071019;
+  font-weight: 600;
+}
+
+.team-selection-dialog__btn--secondary {
+  background: rgba(255, 255, 255, 0.08);
+}

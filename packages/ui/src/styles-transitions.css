@@ -21,3 +21,33 @@
     transform: translateX(0);
   }
 }
+
+/* Przejście do Predazzo: menu znika, potem wchodzi dashboard */
+.app-view--predazzo-exit .main-menu__content,
+.app-view--predazzo-exit .main-menu__header,
+.app-view--predazzo-exit .main-menu__footer {
+  animation: predazzo-exit 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes predazzo-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+.app-view--predazzo-enter .predazzo-dash {
+  animation: predazzo-dash-enter 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes predazzo-dash-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

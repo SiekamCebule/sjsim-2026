@@ -12,12 +12,15 @@
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "format": "prettier \"packages/**/*.{ts,tsx,js,jsx,json,md,css}\" --check",
-    "format:write": "prettier \"packages/**/*.{ts,tsx,js,jsx,json,md,css}\" --write"
+    "format:write": "prettier \"packages/**/*.{ts,tsx,js,jsx,json,md,css}\" --write",
+    "sapporo": "tsx scripts/simulate-sapporo.ts",
+    "test-form-change": "tsx scripts/test-form-change.ts"
   },
   "engines": {
     "node": ">=20 <21"
   },
   "devDependencies": {
+    "tsx": "^4.19.2",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.56.0",

@@ -43,6 +43,8 @@ Daj średnio widoczny przycisk "Ręcznie ustaw belkę"; po tym następuje ostrze
 Jeśli to: (1) konkurs drużyn mieszanych lub (2) konkurs duetów mężczyzn — przed przejściem do konkursu pojawia się konieczność wybrania składu do drużyny i jego kolejności. Rozwiąż to fajnie pod względem UX, by dało się przeciągając zmieniać kolejność. Uwaga: w konkursach mieszanych kolejność jest taka: kobieta, mężczyzna, kobieta, mężczyzna.
 Uwaga: w duetach (2 mężczyzn) lub drużynach mieszanych (2 kobiety + 2 mężczyzn) biorą udział tylko te reprezentacje, które mają wystarczającą ilość osób.
 
+# Systemy przed konkursem
+- Automatycznie belka.
 
 # Systemy działające podczas konkursu
 Nie jest to część zasad skoków narciarskich, a logika aplikacyjna.
@@ -73,3 +75,40 @@ Znajdują się w pliku men_jumpers_sapporo.csv (format: Country,Name,Surname)
 # Konkursy w Sapporo
 2 konkursy, ale także treningi, serie próbne i kwalifikacje. Są po to, by gracz mógł wybrać skład na podstawie obserwacji z dodatkiem losowej formy zawodników. Jednak bez konkursów w Willingen.
 Są one symulowane "na raz", pod maską, na urządzeniu użytkownika, bez pokazywania przebiegu konkursu. Mimo to, dalej działa tak samo system wiatru i belek, tylko użytkownik widzi końcowe wyniki i nie ma wpływu na rozegranie konkursów. Czyli po prostu automatyzujemy i od razu pokazujemy wyniki. Wyniki trafiaja do archiwum, skąd można podejrzeć wyniki w Predazzo Dashboardzie.
+
+# Symulacja skoku
+Czynniki symulacji: wiatr, belka, skill skoczka, forma skoczka (bardziej dynamiczna niż skill), losowość.
+Parametry skoczka:
+- Skill na mniejszych skoczniach (1-100)
+    Nie zmienia się. Jak ktoś ma lepszy ten skill niż skill na większych skoczniach, notuje lepsze wyniki na mniejszych skoczniach — gorzej radzi sobie na "mamutach" (skoczniach największych).
+- Skill na większych skoczniach (1-100)
+    Nie zmienia się. Jak ktoś ma lepszy ten skill niż skill na mniejszych skoczniach, notuje lepsze wyniki na większych skoczniach — gorzej radzi sobie na skoczniach, na których ważne jest wybicie i siła (np. Predazzo HS107).
+- Lądowanie (-3, -2, -1, 0, 1, 2, 3)
+    Po prostu niższe/wyższe noty za styl, choć i tak są one okraszone sporą losowością i wpływem odległości (za HS = na ogół niższe noty)
+- Forma (1-100, mocno zmienna)
+    Szybko się zmienia. Np. z weekendu na weekend z 70 na 50... potem 65, 90, 30... (przykładowo)
+- Bonus w ważnych skokach (-3, -2, -1, brak, 1, 2, 3)
+    Jeśli ujemne, zawodnik skacze lepiej na treningach, seriach próbnych i (trochę) w kwalifikacjach; traci za to w seriach ważnych, seriach konkursowych.
+    Jeśli dodatnie, zawodnik skacze lepiej w seriach ważnych, konkursowych, niż w seriach nieocenianych (np. z powodu lenistwa lub innych powodów)
+    Nie jest to wpływ liniowy, a na dany dzień może wylosować się efekt, który znosi negatywny wpływ tej cechy przynajmniej w jakimś stopniu;
+
+# Kwestia wiatru i jego wpływu
+Pojęcia:
+- **Uśredniony wiatr** (z pomiarów) jest rezultatem dodania błędu pomiaru do **wiatru podczas skoku**, który jest bardziej "pod spodem"/"symulacyjny".
+- **Wiatr podczas skoku** = **bazowy wiatr** + RANDOM(**zmienność wiatru**)
+- **Bazowy wiatr** jest ogólną reprezentacją sytuacji z wiatrem. Np. konkurs ma -1.4, czyli ogólnie w konkursie wiatr wieje -1.4m/s w plecy. Może się to zmieniać w trakcie konkursu, ale jeszcze nie na tym etapie prac.
+- **Zmienność wiatru** określa "loteryjność" konkursu i zwiększa zakres losowości przy obliczaniu **wiatru podczas skoku**. Niestabilne wietrznie konkursy (tzw. "loterie") mają wysoki współczynnik zmienności wiatru.
+
+Wpływ wiatru na skok podlega jeszcze losowości zależnej od **zmienności wiatru** — dla małej zmienności, efekt jest bardzo przewidywalny. Im większa zmienność, tym szerszy zakres losowości wpływającej na odległość; przy dużej zmienności pozytywny wpływ wiatru staje się mniej pewny, a wiatr w plecy częściej dodatkowo skraca skok.”. Więc ogółem silne podmuchy to zawsze utrata pewnego potencjału maksymalnego.
+
+- **Punkt K** skaluje *siłę* wpływu wiatru na odległość: im większe K, tym więcej metrów daje (lub zabiera) 1 m/s wiatru.
+- W przybliżeniu: +1.0 m/s wiatru pod narty to ok. **+1.5–2 m** na K90, **+3–4 m** na K120 i **+7–9 m** na K200 (wiatr w plecy działa silniej negatywnie).
+- Dla bardzo dużych skoczni (K≈185+) wpływ wiatru jest dodatkowo mnożony (~**×1.08**), a przy dużej zmienności zakres losowości rośnie, więc nawet dobry wiatr traci część potencjału maksymalnego.
+
+Czyli: co skok zmienia się **wiatr podczas skoku**, który równa się **bazowemu wiatrowi** i dodatkiem na bazie **zmienności wiatru**. Im większa zmienność wiatru, tym wpływ na odległość, szczególnie pozytywny wpływ może ucierpieć, staje się bardziej nieprzewidywalny. A wiatr w plecy to ogółem spore problemy, a pod narty — pomoc w osiągnięciu dobrej odległości.
+
+# Kwestia belki i jej wpływu
+Belka ma tak wpływ na odległość (liniowy):
+delta_distance = (delta_gate) * (`punkty za belkę wg parametrów skoczni` / `punkty za metr poniżej/powyżej punktu K wg parametrów skoczni`)
+Np. obniżamy o 2 belki w Predazzo HS107
+delta_distance = (-2) * (6.0 / 2.0) = -6 metrów

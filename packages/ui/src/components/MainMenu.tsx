@@ -1,84 +1,144 @@
 import type { JSX } from 'react';
+import { useState } from 'react';
 import menuBg from '@assets/predazzo.jpg';
 
 const APP_VERSION = '1.0.0';
 
 interface MainMenuProps {
   onNewGame: () => void;
+  autoJumpIntervalMs: number;
+  onAutoJumpIntervalChange: (ms: number) => void;
 }
 
-export const MainMenu = ({ onNewGame }: MainMenuProps): JSX.Element => (
-  <div
-    className="main-menu"
-    style={{ backgroundImage: `url(${menuBg})` }}
-  >
-    <div className="main-menu__overlay" />
-    <header className="main-menu__header">
-      <div className="main-menu__title-block">
-        <h1 className="main-menu__title">Sj.Sim</h1>
-        <p className="main-menu__subtitle">Predazzo Edition</p>
-      </div>
-      <button
-        type="button"
-        className="main-menu__settings"
-        title="Ustawienia"
-        aria-label="Ustawienia"
-      >
-        <SettingsIcon />
-      </button>
-    </header>
+const AUTO_JUMP_OPTIONS = [
+  { value: 3000, label: '3 sekundy' },
+  { value: 5000, label: '5 sekund' },
+  { value: 10000, label: '10 sekund' },
+  { value: 20000, label: '20 sekund' },
+  { value: 30000, label: '30 sekund' },
+  { value: 40000, label: '40 sekund' },
+  { value: 50000, label: '50 sekund' },
+  { value: 60000, label: '1 minuta' },
+];
 
-    <section className="main-menu__content">
-      <button
-        type="button"
-        className="main-menu__card main-menu__card--action"
-        onClick={onNewGame}
-      >
-        <span className="main-menu__card-icon" aria-hidden>
-          <PlayIcon />
-        </span>
-        <div className="main-menu__card-body">
-          <h2 className="main-menu__card-title">Nowa rozgrywka</h2>
-          <p className="main-menu__card-desc">
-            Powołaj swoją kadrę jako Trener lub wciel się w rolę Dyrektora konkursów w Predazzo.
-          </p>
+export const MainMenu = ({
+  onNewGame,
+  autoJumpIntervalMs,
+  onAutoJumpIntervalChange,
+}: MainMenuProps): JSX.Element => {
+  const [showSettings, setShowSettings] = useState(false);
+
+  return (
+    <div
+      className="main-menu"
+      style={{ backgroundImage: `url(${menuBg})` }}
+    >
+      <div className="main-menu__overlay" />
+      <header className="main-menu__header">
+        <div className="main-menu__title-block">
+          <h1 className="main-menu__title">Sj.Sim</h1>
+          <p className="main-menu__subtitle">Predazzo Edition</p>
         </div>
-      </button>
-      <div className="main-menu__load-panel">
-        <h2 className="main-menu__load-title">
-          <span className="main-menu__load-title-icon" aria-hidden>
-            <FolderIcon />
-          </span>
-          Wczytaj rozgrywkę
-        </h2>
-        <ul className="main-menu__save-list" role="list">
-          <li>
-            <SaveSlot
-              location="Predazzo (Austria)"
-              summary="Konkurs mężczyzn, skocznia normalna"
-              lastPlayed="1.03.2026"
-            />
-          </li>
-        </ul>
-      </div>
-    </section>
+        <button
+          type="button"
+          className="main-menu__settings"
+          title="Ustawienia"
+          aria-label="Ustawienia"
+          onClick={() => setShowSettings(true)}
+        >
+          <SettingsIcon />
+        </button>
+      </header>
 
-    <footer className="main-menu__footer">
-      <span className="main-menu__version">v{APP_VERSION}</span>
-    </footer>
-  </div>
-);
+      <section className="main-menu__content">
+        <button
+          type="button"
+          className="main-menu__card main-menu__card--action"
+          onClick={onNewGame}
+        >
+          <span className="main-menu__card-icon" aria-hidden>
+            <PlayIcon />
+          </span>
+          <div className="main-menu__card-body">
+            <h2 className="main-menu__card-title">Nowa rozgrywka</h2>
+            <p className="main-menu__card-desc">
+              Powołaj swoją kadrę jako Trener lub wciel się w rolę Dyrektora konkursów w Predazzo.
+            </p>
+          </div>
+        </button>
+        <div className="main-menu__load-panel">
+          <h2 className="main-menu__load-title">
+            <span className="main-menu__load-title-icon" aria-hidden>
+              <FolderIcon />
+            </span>
+            Wczytaj rozgrywkę
+          </h2>
+          <ul className="main-menu__save-list" role="list">
+            <li>
+              <SaveSlot
+                location="Predazzo (Austria)"
+                summary="Konkurs mężczyzn, skocznia normalna"
+                lastPlayed="1.03.2026"
+              />
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <footer className="main-menu__footer">
+        <span className="main-menu__version">v{APP_VERSION}</span>
+      </footer>
+
+      {showSettings && (
+        <div
+          className="main-menu__settings-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="main-menu-settings-title"
+          onClick={(e) => e.target === e.currentTarget && setShowSettings(false)}
+        >
+          <div className="main-menu__settings-dialog">
+            <h2 id="main-menu-settings-title" className="main-menu__settings-dialog-title">
+              Ustawienia
+            </h2>
+            <label className="main-menu__settings-row">
+              <span>Auto-skok — czas między skokami</span>
+              <select
+                className="main-menu__settings-select"
+                value={autoJumpIntervalMs}
+                onChange={(e) => onAutoJumpIntervalChange(Number(e.target.value))}
+              >
+                {AUTO_JUMP_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </label>
+            <div className="main-menu__settings-dialog-actions">
+              <button
+                type="button"
+                className="main-menu__settings-dialog-btn"
+                onClick={() => setShowSettings(false)}
+              >
+                Zamknij
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const SaveSlot = ({
   location,
   summary,
-  lastPlayed
+  lastPlayed,
 }: {
   location: string;
   summary: string;
   lastPlayed: string;
 }): JSX.Element => (
-  <button type="button" className="main-menu__save-slot">
+  <button type="button" className="main-menu__save-slot" disabled title="Wczytanie rozgrywki — wkrótce">
     <span className="main-menu__save-slot-icon" aria-hidden>
       <SaveFileIcon />
     </span>
