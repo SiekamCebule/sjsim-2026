@@ -32,24 +32,53 @@ jobs:
         with:
           version: 10
 
+      - name: Setup Python (node-gyp)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Ensure setuptools (Windows)
+        if: runner.os == 'Windows'
+        run: python -m pip install --upgrade pip setuptools
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Rebuild native deps (Linux)
         if: runner.os == 'Linux'
-        run: pnpm -C packages/app exec electron-rebuild -f -w better-sqlite3
+        run: pnpm -C packages/app exec -- electron-rebuild -f -w better-sqlite3
 
       - name: Rebuild native deps (Windows)
         if: runner.os == 'Windows'
-        run: pnpm -C packages/app exec electron-rebuild -f -w better-sqlite3
+        run: pnpm -C packages/app exec -- electron-rebuild -f -w better-sqlite3
+
+      - name: Build UI (all)
+        shell: bash
+        run: pnpm -C packages/ui run build
+
+      - name: Build app (all)
+        shell: bash
+        run: pnpm -C packages/app run build
+
+      - name: Verify app entry (all)
+        shell: bash
+        run: test -f packages/app/dist/main.js
+
+      - name: Copy UI dist (all)
+        shell: bash
+        run: pnpm run copy-ui-dist
+
+      - name: Apply fake names (all)
+        shell: bash
+        run: pnpm run apply-fake-names:release -- --dist packages/app/ui/dist
 
       - name: Build release (Linux)
         if: runner.os == 'Linux'
-        run: pnpm run release:linux
+        run: pnpm --filter @sjsim/app run package:linux
 
       - name: Build release (Windows)
         if: runner.os == 'Windows'
-        run: pnpm run release:win
+        run: pnpm --filter @sjsim/app run package:win
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
