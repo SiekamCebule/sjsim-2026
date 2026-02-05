@@ -415,6 +415,7 @@ export const CompetitionScreen = ({
   );
   const hill = useMemo(() => hillData(event.hill), [event.hill]);
   const isMixedEvent = kind === 'team_mixed';
+  const baseGateGender = isMixedEvent ? null : (event.gender === 'women' ? 'women' : 'men');
   const [juryBravery, setJuryBravery] = useState<JuryBravery>(() => initialJuryBravery ?? pickJuryBravery(event));
   const [showJuryBraveryDialog, setShowJuryBraveryDialog] = useState(
     () => isDirector && autoBar && !initialJuryBravery
@@ -530,19 +531,19 @@ export const CompetitionScreen = ({
   const currentItem = queue[queueIndex];
 
   const startGateForJumper = (jumper?: Jumper): number => {
-    if (!isMixedEvent) return startGateByGender.men;
+    if (!isMixedEvent) return startGateByGender[baseGateGender ?? 'men'];
     if (jumper?.gender === 'women') return startGateByGender.women;
     return startGateByGender.men;
   };
 
   const gateDeltaForJumper = (jumper?: Jumper): number => {
-    if (!isMixedEvent) return gateDeltaMen;
+    if (!isMixedEvent) return (baseGateGender === 'women' ? gateDeltaWomen : gateDeltaMen);
     if (jumper?.gender === 'women') return gateDeltaWomen;
     return gateDeltaMen;
   };
 
-  const currentGateDelta = currentItem ? gateDeltaForJumper(currentItem.jumper) : gateDeltaMen;
-  const currentStartGate = currentItem ? startGateForJumper(currentItem.jumper) : startGateByGender.men;
+  const currentGateDelta = currentItem ? gateDeltaForJumper(currentItem.jumper) : gateDeltaForJumper();
+  const currentStartGate = currentItem ? startGateForJumper(currentItem.jumper) : startGateForJumper();
   const minCoachGateDelta = -GATE_DELTA_RANGE - currentGateDelta;
   const gateValueFor = (genderKey: 'men' | 'women', gateDelta: number): number => {
     const startGate = genderKey === 'women' ? startGateByGender.women : startGateByGender.men;
@@ -1357,7 +1358,9 @@ export const CompetitionScreen = ({
   const handleNextJump = (): void => {
     if (!currentItem || isRoundComplete) return;
     if (gateHighlight) setGateHighlight(false);
-    const genderKey = genderKeyForJumper(currentItem.jumper);
+    const genderKey = isMixedEvent
+      ? genderKeyForJumper(currentItem.jumper)
+      : (baseGateGender ?? 'men');
     const currentStartGate = startGateForJumper(currentItem.jumper);
     const currentGateDelta = gateDeltaForJumper(currentItem.jumper);
     const previousGenderResults = results.filter(
@@ -1369,27 +1372,31 @@ export const CompetitionScreen = ({
       .filter((item) => genderKeyForJumper(item.jumper) === genderKey);
     const jumpsSinceChange = previousGenderResults.length + 1 - lastGateChangeJump[genderKey];
     const nextWind = windProvider.getWind();
-    const gateDecision = computeAutoGateDelta({
-      currentGateDelta,
-      currentStartGate,
-      nextWind,
-      recentResults: [...previousGenderResults, res],
-      nextItems,
-      jumpsSinceChange,
-    });
-    const nextGateDelta = gateDecision.nextGateDelta;
-    console.log('[SJSIM][AUTO-GATE]', {
-      eventId: event.id,
-      kind: event.type,
-      gender: genderKey,
-      jumpId: res.id,
-      bib: res.bib,
-      currentGate: res.gate,
-      gateDelta: currentGateDelta,
-      nextGateDelta,
-      bravery: juryBravery,
-      score: gateDecision.debug,
-    });
+    const gateDecision = canAutoGate
+      ? computeAutoGateDelta({
+        currentGateDelta,
+        currentStartGate,
+        nextWind,
+        recentResults: [...previousGenderResults, res],
+        nextItems,
+        jumpsSinceChange,
+      })
+      : null;
+    const nextGateDelta = gateDecision?.nextGateDelta ?? currentGateDelta;
+    if (gateDecision) {
+      console.log('[SJSIM][AUTO-GATE]', {
+        eventId: event.id,
+        kind: event.type,
+        gender: genderKey,
+        jumpId: res.id,
+        bib: res.bib,
+        currentGate: res.gate,
+        gateDelta: currentGateDelta,
+        nextGateDelta,
+        bravery: juryBravery,
+        score: gateDecision.debug,
+      });
+    }
     const nextResults = [...results, res];
     const nextQueueIndex = queueIndex + 1;
     const reordered = reorderQueueForNextGroup({
@@ -1447,7 +1454,9 @@ export const CompetitionScreen = ({
     let workingQueue = [...queue];
     for (let i = queueIndex; i < workingQueue.length; i += 1) {
       const item = workingQueue[i]!;
-      const genderKey = genderKeyForJumper(item.jumper);
+      const genderKey = isMixedEvent
+        ? genderKeyForJumper(item.jumper)
+        : (baseGateGender ?? 'men');
       const currentStartGate = startGateForJumper(item.jumper);
       const currentGateDelta = genderKey === 'women' ? currentGateDeltaWomen : currentGateDeltaMen;
       const res = simulateJump(item, currentWind, currentGateDelta, 0, currentStartGate);
@@ -1456,27 +1465,31 @@ export const CompetitionScreen = ({
         .filter((entry) => genderKeyForJumper(entry.jumper) === genderKey);
       const jumpsSinceChange = genderJumpCounts[genderKey] + 1 - currentLastGateChange[genderKey];
       const nextWind = windProvider.getWind();
-      const gateDecision = computeAutoGateDelta({
-        currentGateDelta,
-        currentStartGate,
-        nextWind,
-        recentResults: [...recentResultsByGender[genderKey], res],
-        nextItems,
-        jumpsSinceChange,
-      });
-      const nextGateDelta = gateDecision.nextGateDelta;
-      console.log('[SJSIM][AUTO-GATE]', {
-        eventId: event.id,
-        kind: event.type,
-        gender: genderKey,
-        jumpId: res.id,
-        bib: res.bib,
-        currentGate: res.gate,
-        gateDelta: currentGateDelta,
-        nextGateDelta,
-        bravery: juryBravery,
-        score: gateDecision.debug,
-      });
+      const gateDecision = canAutoGate
+        ? computeAutoGateDelta({
+          currentGateDelta,
+          currentStartGate,
+          nextWind,
+          recentResults: [...recentResultsByGender[genderKey], res],
+          nextItems,
+          jumpsSinceChange,
+        })
+        : null;
+      const nextGateDelta = gateDecision?.nextGateDelta ?? currentGateDelta;
+      if (gateDecision) {
+        console.log('[SJSIM][AUTO-GATE]', {
+          eventId: event.id,
+          kind: event.type,
+          gender: genderKey,
+          jumpId: res.id,
+          bib: res.bib,
+          currentGate: res.gate,
+          gateDelta: currentGateDelta,
+          nextGateDelta,
+          bravery: juryBravery,
+          score: gateDecision.debug,
+        });
+      }
       const nextResults = [...results, ...newResults, res];
       const reordered = reorderQueueForNextGroup({
         sourceQueue: workingQueue,
@@ -1555,7 +1568,9 @@ export const CompetitionScreen = ({
   };
 
   const adjustGate = (delta: number): void => {
-    const genderKey = currentItem ? genderKeyForJumper(currentItem.jumper) : 'men';
+    const genderKey = isMixedEvent
+      ? (currentItem ? genderKeyForJumper(currentItem.jumper) : 'men')
+      : (baseGateGender ?? 'men');
     if (genderKey === 'women') {
       setGateDeltaWomen((prev) => Math.max(-GATE_DELTA_RANGE, Math.min(GATE_DELTA_RANGE, prev + delta)));
       return;
@@ -1673,7 +1688,7 @@ export const CompetitionScreen = ({
 
   const gateStatusLabel = isMixedEvent
     ? `M: ${startGateByGender.men + gateDeltaMen} · K: ${startGateByGender.women + gateDeltaWomen}`
-    : `${startGateByGender.men + gateDeltaMen}`;
+    : `${startGateByGender[baseGateGender ?? 'men'] + (baseGateGender === 'women' ? gateDeltaWomen : gateDeltaMen)}`;
   const showRoundPositions = hasTeams ? true : roundIndex > 0;
   const showGroupPositions = hasTeams;
 

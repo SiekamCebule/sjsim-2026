@@ -39,9 +39,9 @@ jobs:
         if: runner.os == 'Windows'
         run: pnpm run release:win
 
-      - name: Build release (macOS)
-        if: runner.os == 'macOS'
-        run: pnpm run release:mac
+      # - name: Build release (macOS)
+      #   if: runner.os == 'macOS'
+      #   run: pnpm run release:mac
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

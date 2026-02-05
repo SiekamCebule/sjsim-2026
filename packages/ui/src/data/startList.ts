@@ -320,7 +320,7 @@ export function getSkippedJumperKeys({
       if (isHighSkillAndForm(jumper, event.hill)) chance += 0.12;
       if (isVeryHighSkillAndForm(jumper, event.hill)) chance += 0.08;
       const gender = event.gender === 'mixed' ? (jumper.gender ?? 'men') : event.gender;
-      const relevantRoster = roster.filter((j) => (gender === 'mixed' ? true : (j.gender ?? 'men') === gender));
+      const relevantRoster = roster.filter((j) => (j.gender ?? 'men') === gender);
       const results = getRelevantTrainingResults(event, seriesIdx, seriesIndex0, eventResults, gender, schedule);
       chance += performanceSkipBoost(jumper, relevantRoster, results, event.hill);
 

@@ -44,9 +44,9 @@ importers:
       better-sqlite3:
         specifier: ^12.6.2
         version: 12.6.2
-      electron:
-        specifier: ^28.2.0
-        version: 28.3.3
+      bindings:
+        specifier: ^1.5.0
+        version: 1.5.0
     devDependencies:
       '@types/better-sqlite3':
         specifier: ^7.6.13
@@ -63,12 +63,18 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
+      electron:
+        specifier: ^28.2.0
+        version: 28.3.3
       electron-builder:
         specifier: ^24.13.3
         version: 24.13.3(electron-builder-squirrel-windows@24.13.3)
       electron-rebuild:
         specifier: ^3.2.9
         version: 3.2.9
+      prebuild-install:
+        specifier: ^7.1.3
+        version: 7.1.3
       wait-on:
         specifier: ^7.2.0
         version: 7.2.0

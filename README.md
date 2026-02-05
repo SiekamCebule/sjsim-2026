@@ -15,7 +15,7 @@ Gra jest przedmiotem wyzwania, mającego na celu stworzenie rozbudowanego symula
 - Możliwość manipulacji belką w trybie dyrektora, możliwość obniżenia belki swoim zawodnikom w trybie trenera
 - Nowoczesne UI w stylu dashboardowym, archiwum wyników
 - Drobne elementy fabuły takie jak aktualny "faworyt", "czarny koń" czy "największy zawód"
-- Realistyczna symulacja skoków oparta na umiejętnościach zawodników, wietrze i losowości, inspirowana systemem z innej gry autora —[Ski Jump Draft](https://github.com/Ski-Jump-Draft)
+- Realistyczna symulacja skoków oparta na umiejętnościach zawodników, wietrze i losowości, inspirowana systemem z innej gry autora — [Ski Jump Draft](https://github.com/Ski-Jump-Draft)
 - Możliwość zapisu gry i wrócenia do niej
 
 ## Screenshots

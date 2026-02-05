@@ -7,6 +7,7 @@ const EXPERIMENTAL_SJSIM_FLAG =
   process.env.npm_config_experimental_sjsim === 'true';
 
 export default defineConfig({
+  base: './',
   plugins: [react()],
   resolve: {
     alias: {
