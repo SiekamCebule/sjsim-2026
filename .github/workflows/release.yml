@@ -58,11 +58,13 @@ jobs:
 
       - name: Build app (all)
         shell: bash
-        run: pnpm exec -- tsc -p packages/app/tsconfig.json
+        run: pnpm -C packages/app run build
 
       - name: Verify app entry (all)
         shell: bash
-        run: test -f packages/app/dist/main.js
+        run: |
+          ls -la packages/app/dist || true
+          test -f packages/app/dist/main.js
 
       - name: Copy UI dist (all)
         shell: bash
@@ -75,6 +77,11 @@ jobs:
       - name: Build release (Linux)
         if: runner.os == 'Linux'
         run: pnpm --filter @sjsim/app run package:linux
+
+      - name: Use npm for electron-builder (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: echo "npm_execpath=npm" >> $GITHUB_ENV
 
       - name: Build release (Windows)
         if: runner.os == 'Windows'
