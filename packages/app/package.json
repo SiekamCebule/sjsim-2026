@@ -47,8 +47,20 @@
       "output": "release"
     },
     "files": [
-      "dist/**",
-      "ui/dist/**",
+      {
+        "from": "dist",
+        "to": "dist",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "ui/dist",
+        "to": "ui/dist",
+        "filter": [
+          "**/*"
+        ]
+      },
       "package.json"
     ],
     "asarUnpack": [
