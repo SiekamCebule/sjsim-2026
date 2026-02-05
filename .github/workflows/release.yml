@@ -33,7 +33,15 @@ jobs:
           version: 10
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Rebuild native deps (Linux)
+        if: runner.os == 'Linux'
+        run: pnpm -C packages/app exec electron-rebuild -f -w better-sqlite3
+
+      - name: Rebuild native deps (Windows)
+        if: runner.os == 'Windows'
+        run: pnpm -C packages/app exec electron-rebuild -f -w better-sqlite3
 
       - name: Build release (Linux)
         if: runner.os == 'Linux'
@@ -41,9 +49,7 @@ jobs:
 
       - name: Build release (Windows)
         if: runner.os == 'Windows'
-        run: |
-          pnpm -C packages/app exec electron-rebuild -f -w better-sqlite3
-          pnpm run release:win
+        run: pnpm run release:win
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
