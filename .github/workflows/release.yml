@@ -58,7 +58,7 @@ jobs:
 
       - name: Build app (all)
         shell: bash
-        run: pnpm -C packages/app run build
+        run: pnpm exec -- tsc -p packages/app/tsconfig.json
 
       - name: Verify app entry (all)
         shell: bash
