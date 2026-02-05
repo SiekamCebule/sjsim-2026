@@ -43,6 +43,7 @@
     "productName": "Sj.Sim Predazzo Edition",
     "artifactName": "Sj.Sim Predazzo Edition-${version}-${os}-${arch}.${ext}",
     "directories": {
+      "app": ".",
       "output": "release"
     },
     "files": [
