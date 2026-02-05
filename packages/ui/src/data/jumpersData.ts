@@ -105,7 +105,14 @@ function load(): void {
   if (_menJumpers) return;
   _menJumpers = csvToObjects(menJumpersRaw, (r) => toJumper(r));
   _womenJumpers = csvToObjects(womenJumpersRaw, (r) => toJumper(r, 'women'));
-  _menTeams = csvToObjects(menTeamsRaw, (r) => toJumper(r));
+  const menTeamsRawParsed = csvToObjects(menTeamsRaw, (r) => toJumper(r));
+  const menAll = _menJumpers;
+  _menTeams = menTeamsRawParsed.map((mt) => {
+    const full = menAll?.find(
+      (m) => m.country === mt.country && m.name === mt.name && m.surname === mt.surname
+    );
+    return full ?? mt;
+  });
   const womenTeamsRawParsed = csvToObjects(womenTeamsRaw, (r) => toJumper(r, 'women'));
   const womenAll = _womenJumpers;
   _womenTeams = womenTeamsRawParsed.map((wt) => {

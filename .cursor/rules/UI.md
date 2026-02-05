@@ -3,7 +3,7 @@
 - Chcę użyć czcionki IBM Plex Sans.
 - Zwięzły UX writing
 - Będę dawał ci bardzo proste mockupy w postaci zdjęć, a także ścieżki do plików graficznych, np. tła.
-- Kolory: zimno, olimpijsko, ciemno.
+- Kolory: zimno, ciemno.
     Tło: very dark navy
     Surface: slightly lighter navy
     Text: off-white + muted gray

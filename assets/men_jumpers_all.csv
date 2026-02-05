@@ -1,23 +1,23 @@
 Country,Name,Surname, A_Skill, B_Skill, Landing, Form, BonusImportantJumps
 AUT,Stephan,Embacher,90,83,1,70,0
 AUT,Jan,Hoerl,95,84,0,58,-1
-AUT,Stefan,Kraft,87,95,3,35,0
-AUT,Daniel,Tschofenig,92,85,1,55,0
-AUT,Manuel,Fettner,88,79,-1,63,-1
-AUT,Jonas,Schuster,84,74,-1,70,0
+AUT,Stefan,Kraft,88,96,3,29,0
+AUT,Daniel,Tschofenig,93,86,1,48,0
+AUT,Manuel,Fettner,87,80,-1,70,-1
+AUT,Jonas,Schuster,84,74,-1,75,0
 AUT,Maximilian,Ortner,86,75,1,40,1
 AUT,Clemens,Aigner,85,70,0,50,0
 AUT,Markus,Mueller,81,69,0,40,0
-BUL,Vladimir,Zografski,85,72,0,70,1
+BUL,Vladimir,Zografski,86,72,0,74,1
 CAN,Mackenzie,Boyd-Clowes,75,60,0,35,0
 CHN,Song,Qiwu,60,58,0,50,0
 CZE,Roman,Koudelka,76,68,0,55,0
 CZE,David,Rygl,55,55,0,45,0
 EST,Kaimar,Vagul,59,59,0,50,0
-EST,Artti,Aigro,70,80,-1,30,0
+EST,Artti,Aigro,71,81,-1,27,0
 EST,Andero,Kapp,50,50,0,55,0
-FIN,Antti,Aalto,76,76,0,65,2
-FIN,Niko,Kytosaho,69,83,0,70,0
+FIN,Antti,Aalto,77,78,0,65,2
+FIN,Niko,Kytosaho,69,83,0,71,0
 FIN,Vilho,Palosaari,70,70,1,30,0
 FIN,Eetu,Nousiainen,60,73,0,30,0
 FIN,Jarkko,Maatta,65,60,0,80,0
@@ -25,19 +25,19 @@ FIN,Tomas,Kuisma,52,55,0,60,0
 FRA,Valentin,Foubert,84,71,1,38,0
 FRA,Jules,Chervet,66,66,0,59,0
 FRA,Enzo,Milesi,67,58,0,56,0
-GER,Felix,Hoffmann,89,80,0,70,-1
+GER,Felix,Hoffmann,89,80,0,76,-1
 GER,Pius,Paschke,80,82,0,40,1
-GER,Philipp,Raimund,90,79,0,60,-1
-GER,Andreas,Wellinger,90,83,2,20,1
-GER,Karl,Geiger,88,80,1,25,2
+GER,Philipp,Raimund,92,78,0,60,-1
+GER,Andreas,Wellinger,90,85,2,20,1
+GER,Karl,Geiger,89,83,1,23,2
 GER,Luca,Roth,75,61,0,45,0
 GER,Ben,Bayer,71,59,0,39,0
 ITA,Giovanni,Bresadola,65,75,0,40,0
 ITA,Francesco,Cecon,69,59,0,30,0
 ITA,Alex,Insam,70,70,1,60,0
-JPN,Ryoyu,Kobayashi,90,90,1,75,1
+JPN,Ryoyu,Kobayashi,92,92,1,75,1
 JPN,Naoki,Nakamura,83,83,2,80,0
-JPN,Ren,Nikaido,85,85,2,90,1
+JPN,Ren,Nikaido,86,87,2,90,1
 JPN,Yukiya,Sato,70,73,0,60,0
 JPN,Noriaki,Kasai,56,67,2,40,0
 JPN,Sakutaro,Kobayashi,77,70,0,50,-1
@@ -46,35 +46,35 @@ JPN,Keiichi,Sato,68,66,0,48,0
 JPN,Junshiro,Kobayashi,69,65,0,55,0
 JPN,Go,Yamamoto,63,64,0,60,0
 KAZ,Ilya,Miziernykh,70,62,1,65,0
-KAZ,Danil,Wasiljew,65,70,0,60,0
+KAZ,Danil,Vassilyev,65,70,0,60,0
 KAZ,Sabirzhan,Muminov,50,38,-2,40,0
 KAZ,Sergey,Tkachenko,45,45,-1,50,0
 KAZ,Nurshat,Tursunzhanov,35,35,-2,50,0
 KAZ,Svyatoslav,Nazarenko,55,60,0,15,0
 KOR,Heung,Chul Choi,50,45,-2,29,0
-NOR,Johann Andre,Forfang,80,92,0,30,-2
+NOR,Johann Andre,Forfang,81,91,0,30,-2
 NOR,Marius,Lindvik,85,90,0,39,-1
-NOR,Kristoffer Eriksen,Sundal,84,84,1,60,1
-NOR,Isak Andreas,Langmo,70,76,0,85,-3
+NOR,Kristoffer Eriksen,Sundal,85,84,1,65,1
+NOR,Isak Andreas,Langmo,70,76,0,90,-3
 NOR,Robin,Pedersen,70,85,0,50,-1
 NOR,Halvor Egner,Granerud,80,83,0,58,-1
 NOR,Benjamin,Oestvold,70,80,0,70,-2
 NOR,Soelve Jokerund,Strand,70,70,0,60,0
-POL,Kamil,Stoch,83,80,3,30,1
+POL,Kamil,Stoch,83,80,3,29,1
 POL,Kacper,Tomasiak,82,77,1,85,2
 POL,Paweł,Wąsek,80,81,1,35,0
 POL,Maciej,Kot,78,69,0,48,-1
-POL,Dawid,Kubacki,85,76,0,30,0
+POL,Dawid,Kubacki,85,77,0,28,0
 POL,Piotr,Żyła,79,83,0,37,2
-POL,Aleksander,Zniszczoł,70,84,0,17,-1
+POL,Aleksander,Zniszczoł,70,83,0,17,-1
 POL,Klemens,Joniak,73,66,0,60,0
 POL,Andrzej,Stękała,60,70,1,40,0
 POL,Jakub,Wolny,65,76,1,40,0
 ROU,Daniel Andrei,Cacina,68,51,0,50,0
 ROU,Mihnea Alexandru,Spulber,60,50,0,50,0
-SLO,Domen,Prevc,76,98,1,99,0
+SLO,Domen,Prevc,75,95,1,97,0
 SLO,Anze,Lanisek,90,88,2,69,0
-SLO,Timi,Zajc,77,90,1,29,-1
+SLO,Timi,Zajc,78,90,1,29,-1
 SLO,Rok,Oblak,73,71,1,89,0
 SLO,Ziga,Jancar,70,70,1,70,0
 SLO,Zak,Mogel,72,72,0,50,0

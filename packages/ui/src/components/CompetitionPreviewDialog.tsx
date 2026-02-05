@@ -1,27 +1,51 @@
 import type { JSX } from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { ScheduleItem, NextEventWeather } from '../data/predazzoSchedule';
 import { getWeatherConditionLabel } from '../data/predazzoSchedule';
 import { WEATHER_ICONS } from '../data/weatherIcons';
-import { buildIndividualStartList, createDefaultRandom, type SimulationJumper } from '@sjsim/core';
-import { countryToFlag, getMenTeams, getWomenTeams, getWorldCupOrderAll, getWomenWorldCupOrderAll, type Jumper } from '../data/jumpersData';
+import { buildDuetRound1StartList, buildIndividualStartList, buildMixedRound1StartList, createDefaultRandom, JuryBravery, type SimulationJumper } from '@sjsim/core';
+import { countryToFlag, type Jumper } from '../data/jumpersData';
+import type { GameDataSnapshot } from '../data/gameDataSnapshot';
+import {
+  resolveMenTeams,
+  resolveWomenTeams,
+  resolveMenWorldCupOrder,
+  resolveWomenWorldCupOrder,
+} from '../data/gameDataSnapshot';
+import { JURY_BRAVERY_LABELS, JURY_BRAVERY_OPTIONS, pickJuryBravery } from '../data/juryBravery';
+import { getMixedNationsCupRanking, getMenNationsCupRanking } from '../data/nationsCup';
+import type { EventResultsSummary } from '../data/eventResults';
+import { getSkippedJumperKeys } from '../data/startList';
+import { buildTeamPairs } from '../data/teamSelection';
 import type { GameConfigState } from './GameConfig';
 import './competition-preview-dialog.css';
 
 function formatEventShortLabel(item: ScheduleItem): string {
-  const t = item.type === 'training' ? 'Trening' : 'Seria próbna';
-  const g = item.gender === 'men' ? 'mężczyzn' : item.gender === 'women' ? 'kobiet' : '';
-  return `${t} ${g}`.trim();
+  const g =
+    item.gender === 'men'
+      ? 'mężczyzn'
+      : item.gender === 'women'
+        ? 'kobiet'
+        : 'mieszany';
+  if (item.type === 'training') return `Trening ${g}`.trim();
+  if (item.type === 'trial') return `Seria próbna ${g}`.trim();
+  if (item.type === 'individual') return `Konkurs indywidualny ${g}`.trim();
+  if (item.type === 'team_mixed') return 'Konkurs drużyn mieszanych';
+  return 'Konkurs duetów mężczyzn';
 }
 
-function WindSpeedWithDirection({ speed }: { speed: number }): JSX.Element {
+function isDuetTrial(event: ScheduleItem): boolean {
+  return (
+    event.type === 'trial' &&
+    event.gender === 'men' &&
+    (event.trialKind === 'team_men_pairs' || event.id === '21' || event.label.toLowerCase().includes('duet'))
+  );
+}
+
+function windSpeedLabel(speed: number): string {
   const abs = Math.abs(speed);
   const dirLabel = speed < 0 ? 'w plecy' : 'pod narty';
-  return (
-    <>
-      {abs.toFixed(1)} m/s <em>{dirLabel}</em>
-    </>
-  );
+  return `${abs.toFixed(1)} m/s ${dirLabel}`;
 }
 
 function jumperKey(j: Jumper): string {
@@ -46,14 +70,13 @@ function toSimulationJumper(j: Jumper): SimulationJumper {
   };
 }
 
-function variabilitySentence(v: number): JSX.Element {
-  const phrase =
-    v <= 0.04 ? 'bardzo przewidywalny' :
-      v <= 0.2 ? 'raczej przewidywalny' :
-        v <= 0.5 ? 'umiarkowanie zmienny' :
-          v <= 0.75 ? 'trochę "kręcił"' :
-            v <= 1.15 ? 'mocno zmienny' : 'skrajnie loteryjny';
-  return <>Wiatr będzie <em>{phrase}</em>.</>;
+function variabilitySentence(v: number): string {
+  if (v <= 0.04) return 'Wiatr będzie bardzo przewidywalny.';
+  if (v <= 0.2) return 'Wiatr będzie raczej przewidywalny.';
+  if (v <= 0.5) return 'Wiatr będzie umiarkowanie zmienny.';
+  if (v <= 0.75) return 'Wiatr będzie trochę "kręcił".';
+  if (v <= 1.15) return 'Wiatr będzie mocno zmienny.';
+  return 'Wiatr będzie skrajnie loteryjny.';
 }
 
 
@@ -80,9 +103,16 @@ export interface CompetitionPreviewDialogProps {
   event: ScheduleItem;
   config: GameConfigState | null;
   weather: NextEventWeather;
+  allowParticipationToggle?: boolean;
+  gameData?: GameDataSnapshot | null;
+  eventResults?: Record<string, EventResultsSummary>;
+  trainingSeriesIndex?: number;
+  /** Skład wybrany przez trenera dla team_mixed (np. na serię próbną). */
+  teamLineupPreview?: Jumper[];
   onConfirm: (params: {
-    participating: Jumper[];
+    participating?: Jumper[];
     autoBar: boolean;
+    juryBravery?: JuryBravery;
   }) => void;
   onCancel: () => void;
 }
@@ -91,30 +121,114 @@ export const CompetitionPreviewDialog = ({
   event,
   config,
   weather,
+  allowParticipationToggle = true,
+  gameData,
+  eventResults,
+  trainingSeriesIndex,
+  teamLineupPreview,
   onConfirm,
   onCancel,
 }: CompetitionPreviewDialogProps): JSX.Element => {
   const isDirector = config?.mode === 'director';
   const coachCountry = config?.mode === 'coach' ? config.selectedCountry ?? '' : '';
+  const canToggleParticipation = allowParticipationToggle && !!coachCountry;
 
   const fullStartList = useMemo(() => {
     const random = createDefaultRandom();
+    if (isDuetTrial(event)) {
+      const men = resolveMenTeams(gameData);
+      const jumperById = new Map(men.map((j) => [jumperId(j), j]));
+      const teams = buildTeamPairs(men, undefined, eventResults);
+      const duetTeams = teams.map((t) => ({
+        teamId: t.id,
+        country: t.country,
+        jumpers: [t.simMembers[0]!, t.simMembers[1]!] as [SimulationJumper, SimulationJumper],
+      }));
+      const ranking = getMenNationsCupRanking();
+      const startList = buildDuetRound1StartList(duetTeams, ranking);
+      return startList.map((entry) => jumperById.get(entry.jumper.id)!).filter(Boolean);
+    }
+    if (event.gender === 'mixed') {
+      const men = resolveMenTeams(gameData);
+      const women = resolveWomenTeams(gameData);
+      const menByCountry = new Map<string, Jumper[]>();
+      const womenByCountry = new Map<string, Jumper[]>();
+      men.forEach((j) => {
+        const list = menByCountry.get(j.country) ?? [];
+        list.push(j);
+        menByCountry.set(j.country, list);
+      });
+      women.forEach((j) => {
+        const list = womenByCountry.get(j.country) ?? [];
+        list.push(j);
+        womenByCountry.set(j.country, list);
+      });
+      const jumperById = new Map<string, Jumper>();
+      [...men, ...women].forEach((j) => jumperById.set(jumperId(j), j));
+      const countries = [...menByCountry.keys()].filter((country) => {
+        const menList = menByCountry.get(country) ?? [];
+        const womenList = womenByCountry.get(country) ?? [];
+        return menList.length >= 2 && womenList.length >= 2;
+      });
+      const teams = countries.map((country) => {
+        const menList = menByCountry.get(country)!;
+        const womenList = womenByCountry.get(country)!;
+        const useCustom =
+          teamLineupPreview &&
+          teamLineupPreview.length === 4 &&
+          coachCountry &&
+          country === coachCountry;
+        const members = useCustom
+          ? (teamLineupPreview as [Jumper, Jumper, Jumper, Jumper])
+          : ([womenList[0]!, menList[0]!, womenList[1]!, menList[1]!] as const);
+        return {
+          teamId: country,
+          country,
+          jumpers: members.map(toSimulationJumper) as [
+            SimulationJumper,
+            SimulationJumper,
+            SimulationJumper,
+            SimulationJumper
+          ],
+        };
+      });
+      const ranking = getMixedNationsCupRanking();
+      const startList = buildMixedRound1StartList(teams, ranking);
+      return startList.map((entry) => jumperById.get(entry.jumper.id)!).filter(Boolean);
+    }
     if (event.gender === 'women') {
-      const womenRoster = getWomenTeams();
+      const womenRoster = resolveWomenTeams(gameData);
       const simRoster = womenRoster.map(toSimulationJumper);
-      const wcOrder = [...getWomenWorldCupOrderAll()].reverse();
+      const wcOrder = [...resolveWomenWorldCupOrder(gameData)].reverse();
       const startList = buildIndividualStartList(simRoster, wcOrder, random);
       const jumperById = new Map(womenRoster.map((j) => [jumperId(j), j]));
       return startList.map((entry) => jumperById.get(entry.jumper.id)!).filter(Boolean);
     }
     const callups = Object.values(config?.allCallups ?? {}).flat();
-    const menRoster = callups.length > 0 ? callups : getMenTeams();
+    const menRoster = callups.length > 0 ? callups : resolveMenTeams(gameData);
     const simRoster = menRoster.map(toSimulationJumper);
-    const wcOrder = [...getWorldCupOrderAll()].reverse();
+    const wcOrder = [...resolveMenWorldCupOrder(gameData)].reverse();
     const startList = buildIndividualStartList(simRoster, wcOrder, random);
     const jumperById = new Map(menRoster.map((j) => [jumperId(j), j]));
     return startList.map((entry) => jumperById.get(entry.jumper.id)!).filter(Boolean);
-  }, [event.gender, config?.allCallups]);
+  }, [event.gender, event.type, event.trialKind, event.id, event.label, config?.allCallups, gameData, eventResults, coachCountry, teamLineupPreview]);
+
+  const skippedKeys = useMemo(() => {
+    if (event.type !== 'training' && event.type !== 'trial') return new Set<string>();
+    if (event.gender === 'mixed') return new Set<string>();
+    return getSkippedJumperKeys({
+      event,
+      roster: fullStartList,
+      eventResults,
+      trainingSeriesIndex,
+    });
+  }, [event, fullStartList, eventResults, trainingSeriesIndex]);
+
+  /** Lista startowa do wyświetlenia: bez tych, którzy zrezygnowali z treningu/serii próbnej. */
+  const startListDisplay = useMemo(() => {
+    if (event.type !== 'training' && event.type !== 'trial') return fullStartList;
+    return fullStartList.filter((j) => !skippedKeys.has(jumperKey(j)));
+  }, [event.type, fullStartList, skippedKeys]);
 
   /** Dla trenera: którzy z jego kadry są powołani (można odznaczyć w treningu). */
   const coachRoster = useMemo(() => {
@@ -122,22 +236,45 @@ export const CompetitionPreviewDialog = ({
     return fullStartList.filter((j) => j.country === coachCountry);
   }, [fullStartList, coachCountry]);
 
-  /** Zaznaczeni do startu — domyślnie wszyscy; trener może odznaczyć swoich. */
-  const [participatingKeys, setParticipatingKeys] = useState<Set<string>>(() => {
+  /** Domyślni uczestnicy (bez rezygnujących). */
+  const defaultParticipatingKeys = useMemo(() => {
     const s = new Set<string>();
-    fullStartList.forEach((j) => s.add(jumperKey(j)));
+    fullStartList.forEach((j) => {
+      if (!skippedKeys.has(jumperKey(j))) s.add(jumperKey(j));
+    });
     return s;
-  });
+  }, [fullStartList, skippedKeys]);
+
+  /** Zaznaczeni do startu — domyślnie wszyscy; trener może odznaczyć swoich. */
+  const [participatingKeys, setParticipatingKeys] = useState<Set<string>>(() => defaultParticipatingKeys);
+  useEffect(() => {
+    setParticipatingKeys(defaultParticipatingKeys);
+  }, [event.id, defaultParticipatingKeys]);
+
+  const hasParticipationEdits = useMemo(() => {
+    if (defaultParticipatingKeys.size !== participatingKeys.size) return true;
+    for (const key of defaultParticipatingKeys) {
+      if (!participatingKeys.has(key)) return true;
+    }
+    return false;
+  }, [defaultParticipatingKeys, participatingKeys]);
 
   /** Zaznaczone = ręcznie ustawiać belkę. Domyślnie auto. */
   const [manualBar, setManualBar] = useState(false);
+  const [juryBravery, setJuryBravery] = useState<JuryBravery>(() => pickJuryBravery(event));
 
   const participating = useMemo(
     () => fullStartList.filter((j) => participatingKeys.has(jumperKey(j))),
     [fullStartList, participatingKeys]
   );
 
+  const resignedList = useMemo(
+    () => fullStartList.filter((j) => !participatingKeys.has(jumperKey(j))),
+    [fullStartList, participatingKeys]
+  );
+
   const toggleParticipating = (j: Jumper): void => {
+    if (!canToggleParticipation) return;
     const key = jumperKey(j);
     setParticipatingKeys((prev) => {
       const next = new Set(prev);
@@ -150,23 +287,14 @@ export const CompetitionPreviewDialog = ({
     });
   };
 
-  const selectAllCoach = (): void => {
-    setParticipatingKeys((prev) => {
-      const next = new Set(prev);
-      coachRoster.forEach((j) => next.add(jumperKey(j)));
-      return next;
-    });
-  };
-
-  const deselectAllCoach = (): void => {
-    setParticipatingKeys((prev) => {
-      const next = new Set(prev);
-      coachRoster.forEach((j) => next.delete(jumperKey(j)));
-      return next;
-    });
-  };
-
-  const athleteLabel = event.gender === 'women' ? 'zawodniczek' : 'zawodników';
+  const athleteLabel =
+    event.gender === 'mixed'
+      ? 'zawodniczek i zawodników'
+      : event.gender === 'women'
+        ? 'zawodniczek'
+        : 'zawodników';
+  const showCoachRosterLeft = canToggleParticipation && coachRoster.length > 0;
+  const showSkippedList = (event.type === 'training' || event.type === 'trial') && resignedList.length > 0;
 
   return (
     <div
@@ -189,12 +317,42 @@ export const CompetitionPreviewDialog = ({
             </p>
             <p className="competition-preview-dialog__forecast-line competition-preview-dialog__forecast-line--wind">
               <WindIcon />
-              <WindSpeedWithDirection speed={weather.windMs} />.
+              {windSpeedLabel(weather.windMs)}.
             </p>
             <p className="competition-preview-dialog__forecast-line">
               {variabilitySentence(weather.windVariability)}
             </p>
           </div>
+
+          {showCoachRosterLeft && (
+            <div className="competition-preview-dialog__coach-roster-card">
+              <h3 className="competition-preview-dialog__coach-roster-title">
+                {event.gender === 'women' ? 'Twoje zawodniczki' : 'Twoi zawodnicy'}
+              </h3>
+              <p className="competition-preview-dialog__coach-roster-hint">
+                Trening nieobowiązkowy — odznacz {event.gender === 'women' ? 'niestartujące' : 'niestartujących'}.
+              </p>
+              <ul className="competition-preview-dialog__coach-roster-list" role="list">
+                {coachRoster.map((j) => {
+                  const key = jumperKey(j);
+                  const isParticipating = participatingKeys.has(key);
+                  return (
+                    <li key={key}>
+                      <label className="competition-preview-dialog__coach-roster-row">
+                        <input
+                          type="checkbox"
+                          checked={isParticipating}
+                          onChange={() => toggleParticipating(j)}
+                        />
+                        <span className="competition-preview-dialog__flag">{countryToFlag(j.country)}</span>
+                        <span>{j.name} {j.surname}</span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
 
           {isDirector && (
             <div className="competition-preview-dialog__manual-bar-card">
@@ -205,6 +363,20 @@ export const CompetitionPreviewDialog = ({
                   onChange={(e) => setManualBar(e.target.checked)}
                 />
                 <span>Ustawiaj rozbieg samemu</span>
+              </label>
+              <label className={`competition-preview-dialog__jury-select ${manualBar ? 'competition-preview-dialog__jury-select--disabled' : ''}`}>
+                <span>Odwaga jury</span>
+                <select
+                  value={juryBravery}
+                  onChange={(e) => setJuryBravery(e.target.value as JuryBravery)}
+                  disabled={manualBar}
+                >
+                  {JURY_BRAVERY_OPTIONS.map((value) => (
+                    <option key={value} value={value}>
+                      {JURY_BRAVERY_LABELS[value]}
+                    </option>
+                  ))}
+                </select>
               </label>
             </div>
           )}
@@ -217,31 +389,26 @@ export const CompetitionPreviewDialog = ({
           <p className="competition-preview-dialog__subtitle">
             Lista startowa · {participating.length} {athleteLabel}
           </p>
-
-          {coachCountry && coachRoster.length > 0 && (
-            <div className="competition-preview-dialog__coach-actions">
-              <span className="competition-preview-dialog__coach-label">
-                Twoi zawodnicy (trening nieobowiązkowy):
-              </span>
-              <div className="competition-preview-dialog__coach-buttons">
-                <button type="button" onClick={selectAllCoach} className="competition-preview-dialog__btn-link">
-                  Zaznacz wszystkich
-                </button>
-                <span aria-hidden>·</span>
-                <button type="button" onClick={deselectAllCoach} className="competition-preview-dialog__btn-link">
-                  Odznacz wszystkich
-                </button>
+          {showSkippedList && (
+            <div className="competition-preview-dialog__skip-list">
+              <span className="competition-preview-dialog__skip-label">Zrezygnowali:</span>
+              <div className="competition-preview-dialog__skip-items">
+                {resignedList.map((j) => (
+                  <span key={jumperKey(j)} className="competition-preview-dialog__skip-item">
+                    {countryToFlag(j.country)} {j.name} {j.surname}
+                  </span>
+                ))}
               </div>
             </div>
           )}
 
           <div className="competition-preview-dialog__list-wrap">
             <ul className="competition-preview-dialog__list" role="list">
-              {fullStartList.map((j, idx) => {
+              {startListDisplay.map((j, idx) => {
                 const key = jumperKey(j);
                 const isParticipating = participatingKeys.has(key);
                 const isCoachJumper = j.country === coachCountry;
-                const canToggle = isCoachJumper;
+                const canToggle = canToggleParticipation && isCoachJumper;
                 return (
                   <li key={key} className="competition-preview-dialog__row">
                     <span className="competition-preview-dialog__pos">{idx + 1}.</span>
@@ -282,7 +449,15 @@ export const CompetitionPreviewDialog = ({
             <button
               type="button"
               className="competition-preview-dialog__btn competition-preview-dialog__btn--primary"
-              onClick={() => onConfirm({ participating, autoBar: !manualBar })}
+              onClick={() =>
+                onConfirm({
+                  participating:
+                    event.type === 'trial' && event.gender === 'mixed' && !hasParticipationEdits
+                      ? undefined
+                      : participating,
+                  autoBar: !manualBar,
+                  juryBravery: manualBar ? undefined : juryBravery,
+                })}
             >
               Przejdź do konkursu
             </button>

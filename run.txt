@@ -1,0 +1,1 @@
+npm_config_experimental_sjsim=true pnpm -C packages/app dev

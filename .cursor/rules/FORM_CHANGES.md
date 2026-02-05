@@ -11,6 +11,6 @@ W grze ma to wyglądać tak:
 - Jeśli gracz zaczyna od Sapporo, zmień formę na starcie gry, z alfą = 0.1.
 - Jeśli gracz zaczyna w Sappporo, Zmień formę po sobotnim konkursie w Sapporo, z alfą = 0.01.
 - Jeśli gracz zaczyna od Sapporo, zmień formę po niedzielnym konkursie w Sapporo, z alfą = 0.7
-- Jeśli gracz zaczyna od Igrzysk, zmień formę na starcie gry, z alfą = 0.2
+- Jeśli gracz zaczyna od Predazzo, zmień formę na starcie gry, z alfą = 0.2
 
 Potrzebuję skryptu, który umożliwi mi testowanie systemu zmiany formy — który pozwoli wpisanie alfy i wypisanie w konsoli zmian formy, wraz z rankingiem największych zmian i miar statystycznych, także tych ciekawych, na bazie skoczków z men_jumpers_all.csv. Tabela przed i po z kolorami.

@@ -7,8 +7,15 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
+    "copy-ui-dist": "tsx scripts/copy-ui-dist.ts",
     "clean": "npm run clean --workspaces --if-present",
     "dev": "npm run dev --workspace @sjsim/app",
+    "apply-fake-names": "tsx scripts/apply-fake-names.ts",
+    "apply-fake-names:release": "NODE_ENV=production tsx scripts/apply-fake-names.ts --release",
+    "release:prepare": "npm run build && npm run copy-ui-dist && npm run apply-fake-names:release -- --dist packages/app/ui/dist",
+    "release:win": "npm run release:prepare && npm run package:win --workspace @sjsim/app",
+    "release:linux": "npm run release:prepare && npm run package:linux --workspace @sjsim/app",
+    "release:mac": "npm run release:prepare && npm run package:mac --workspace @sjsim/app",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "format": "prettier \"packages/**/*.{ts,tsx,js,jsx,json,md,css}\" --check",
@@ -21,6 +28,7 @@
   },
   "devDependencies": {
     "tsx": "^4.19.2",
+    "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.56.0",

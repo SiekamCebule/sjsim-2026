@@ -30,6 +30,8 @@ export interface JumpResult {
   readonly wind: Wind;
   /** Noty za styl (tylko w konkursach); brak = trening/seria próbna. */
   readonly stylePoints?: number;
+  /** Szczegółowe noty sędziów (5 not; konkursy/kwalifikacje). */
+  readonly styleNotes?: number[];
   readonly disqualified?: boolean;
 }
 

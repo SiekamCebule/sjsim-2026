@@ -78,7 +78,12 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
   }, [currentStep, config.mode, config.coachStart, config.coachCallUps]);
 
   const goNext = (): void => {
-    if (nextStep) setStepHistory((h) => [...h, nextStep]);
+    if (!nextStep) return;
+    if (nextStep === 'done') {
+      handleStart();
+      return;
+    }
+    setStepHistory((h) => [...h, nextStep]);
   };
 
   const goBack = (): void => {
@@ -90,7 +95,6 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
   };
 
   const canProceed =
-    currentStep === 'done' ||
     (currentStep === 'mode' && config.mode) ||
     (currentStep === 'director-start' && config.directorStart) ||
     (currentStep === 'coach-callups' && config.coachCallUps) ||
@@ -124,19 +128,19 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
         {currentStep === 'mode' && (
           <StepScreen
             title="Tryb gry"
-            hint="Jako Dyrektor obserwujesz zawody i masz wpływ na belkę. Jako Trener wybierasz kadrę i prowadzisz ją; tylko mężczyźni mają wcześniejsze konkursy przed Olimpiadą."
+            hint="Wolisz obserwować konkursy z bezpiecznej odległości, a może chcesz spełnić swoje trenerskie ambicje?"
             options={[
               {
                 value: 'director',
-                title: 'Zostań Dyrektorem',
-                desc: 'Obserwujesz zawody (God Mode). Wpływ na belkę w konkursie.',
+                title: 'Zostań dyrektorem',
+                desc: 'Obserwuj zawody i wpływaj na rozbieg podczas skoków.',
                 checked: config.mode === 'director',
                 icon: <DirectorIcon />
               },
               {
                 value: 'coach',
-                title: 'Zostań Trenerem',
-                desc: 'Wybierasz zawodników i prowadzisz kadrę.',
+                title: 'Zostań trenerem',
+                desc: 'Wybierz zawodników i poprowadź kadrę przez konkursy w Predazzo.',
                 checked: config.mode === 'coach',
                 icon: <CoachIcon />
               }
@@ -151,19 +155,19 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
         {currentStep === 'director-start' && (
           <StepScreen
             title="Data rozpoczęcia"
-            hint="Od Sapporo: wyniki z Sapporo i powołania kadr (algorytm). Od razu Olimpiada: start w Predazzo bez wcześniejszych konkursów."
+            hint="Jeśli chcesz, możesz rozegrać dodatkowe konkursy w Sapporo, które odbywają się przed Predazzo — dzięki temu otrzymasz lepszy podgląd, kto jest w jakiej formie. Pamiętaj, że od Sapporo do Predazzo mamy 2.5 tygodnia, przez które forma zawodników może się znacznie zmienić!"
             options={[
               {
                 value: 'sapporo',
-                title: 'Od konkursów w Sapporo',
-                desc: 'Zobacz wyniki Sapporo, potem powołania wszystkich kadr (wybór algorytmu).',
+                title: 'Zacznij konkursami w Sapporo',
+                desc: 'Zobacz wyniki i potem zdecyduj, kto jedzie do Predazzo.',
                 checked: config.directorStart === 'sapporo',
                 icon: <CalendarIcon />
               },
               {
                 value: 'olympics',
-                title: 'Od razu Olimpiada',
-                desc: 'Start w Predazzo bez wcześniejszych konkursów.',
+                title: 'Zacznij konkursami w Predazzo',
+                desc: 'Od razu ruszaj do walki o medale.',
                 checked: config.directorStart === 'olympics',
                 icon: <TrophyIcon />
               }
@@ -189,19 +193,19 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
         {currentStep === 'coach-callups' && (
           <StepScreen
             title="Powołania"
-            hint="Własne: sam decydujesz, kto jedzie. Prawdziwe: kadra jak w rzeczywistości (skład żeński jest zawsze ustalony z góry)."
+            hint="Masz własny pomysł na kadrę? Możesz sam wybrać, kto powalczy o powodzenie w Predazzo."
             options={[
               {
                 value: 'own',
                 title: 'Powołaj skoczków samemu',
-                desc: 'Sam decydujesz, kto jedzie na zawody.',
+                desc: 'Sam decydujesz, kto pojedzie bronić barw wybranego przez Ciebie kraju.',
                 checked: config.coachCallUps === 'own',
                 icon: <HandEditIcon />
               },
               {
                 value: 'real',
                 title: 'Kadra jak w rzeczywistości',
-                desc: 'Skład taki jak w realnych powołaniach. Start od razu od Predazzo.',
+                desc: 'Do Predazzo pojedzie skład zgodny z rzeczywistością.',
                 checked: config.coachCallUps === 'real',
                 icon: <ListIcon />
               }
@@ -225,19 +229,19 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
         {currentStep === 'coach-start' && (
           <StepScreen
             title="Początek rozgrywki"
-            hint="Od Sapporo: symulacja konkursów przed Olimpiadą, forma może się nieco zmienić. Na bazie realnej formy: bez symulacji Sapporo, Olimpiada startuje na realnej klasyfikacji PŚ."
+            hint="Jeśli chcesz, możesz rozegrać dodatkowe konkursy w Sapporo, które odbywają się przed Predazzo — dzięki temu otrzymasz lepszy podgląd, kto jest w jakiej formie. Pamiętaj, że od Sapporo do Predazzo mamy 2.5 tygodnia, przez które forma zawodników może się znacznie zmienić!"
             options={[
               {
                 value: 'sapporo',
-                title: 'Zacznij od Sapporo',
-                desc: 'Symulacja konkursów przed Olimpiadą. Forma może się zmienić.',
+                title: 'Zacznij konkursami w Sapporo',
+                desc: 'Symuluj konkursy w Sapporo, a potem zdecyduj, kto jedzie do Predazzo.',
                 checked: config.coachStart === 'sapporo',
                 icon: <CalendarIcon />
               },
               {
                 value: 'real-form',
-                title: 'Powołania na bazie realnej formy',
-                desc: 'Bez symulacji Sapporo. Olimpiada na realnej klasyfikacji PŚ.',
+                title: 'Zacznij konkursami w Predazzo',
+                desc: 'Wybierz skład i ruszaj do walki o medale w Predazzo.',
                 checked: config.coachStart === 'real-form',
                 icon: <ChartIcon />
               }
@@ -285,22 +289,6 @@ export const GameConfig = ({ onBack, onStart }: GameConfigProps): JSX.Element =>
           />
         )}
 
-        {currentStep === 'done' && (
-          <div className="game-config__step">
-            <p className="game-config__step-hint">
-              Konfiguracja gotowa. Możesz rozpocząć rozgrywkę.
-            </p>
-            <div className="game-config__actions game-config__actions--single">
-              <button
-                type="button"
-                className="game-config__btn game-config__btn--primary"
-                onClick={handleStart}
-              >
-                Rozpocznij rozgrywkę
-              </button>
-            </div>
-          </div>
-        )}
       </section>
     </div>
   );

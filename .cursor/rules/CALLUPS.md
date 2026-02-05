@@ -1,4 +1,4 @@
-Limity z men_limits.csv obowiązują tylko przy powołaniach na Predazzo (Olimpiada). W Sapporo powołania są dowolne (plik men_jumpers_sapporo.csv) – bez walidacji limitów.
+Limity z men_limits.csv obowiązują tylko przy powołaniach na Predazzo. W Sapporo powołania są dowolne (plik men_jumpers_sapporo.csv) – bez walidacji limitów.
 
 Jeśli wybrany został tryb gry nie od Predazzo, ale od Sapporo, wtedy powołania do kadr nie są realistyczne, a że zmieniła się forma skoczków (od Sapporo do Predazzo jest około 3 tygodni), to trzeba wybrać je na nowo. Gracz powołuje swoich skoczków, a reszta kadr dobiera wg algorytmu.
 

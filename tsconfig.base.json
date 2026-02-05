@@ -3,7 +3,10 @@
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "lib": ["ES2020", "DOM"],
+    "lib": [
+      "ES2020",
+      "DOM"
+    ],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,11 +15,27 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@core/*": ["packages/core/src/*"],
-      "@ui/*": ["packages/ui/src/*"],
-      "@app/*": ["packages/app/src/*"],
-      "@infra/*": ["packages/infra/src/*"]
+      "@core/*": [
+        "packages/core/src/*"
+      ],
+      "@sjsim/core": [
+        "packages/core/src/index.ts"
+      ],
+      "@sjsim/core/*": [
+        "packages/core/src/*"
+      ],
+      "@ui/*": [
+        "packages/ui/src/*"
+      ],
+      "@app/*": [
+        "packages/app/src/*"
+      ],
+      "@infra/*": [
+        "packages/infra/src/*"
+      ]
     },
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   }
 }

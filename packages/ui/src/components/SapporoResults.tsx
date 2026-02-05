@@ -5,6 +5,7 @@ import {
   createDefaultRandom,
   applyFormChangeToRoster,
   FORM_CHANGE_ALPHA,
+  HILL_PARAMS,
 } from '@sjsim/core';
 import type {
   SapporoSingleSeriesStep,
@@ -44,6 +45,220 @@ function jumperDisplayName(id: string): string {
   return parts.slice(1).join(' ');
 }
 
+function valColorClass(v: number, prefix: 'wind' | 'comp'): string {
+  return `competition-screen__val competition-screen__val--${prefix}-${v > 0 ? 'pos' : v < 0 ? 'neg' : 'zero'}`;
+}
+
+function formatStylePoints(value: number): string {
+  const rounded = Math.round(value * 2) / 2;
+  return rounded.toFixed(1);
+}
+
+function formatStyleNotes(notes?: number[] | null): string {
+  if (!notes || notes.length === 0) return '—';
+  return notes.map((note) => formatStylePoints(note)).join(' | ');
+}
+
+type SapporoDetails =
+  | {
+    kind: 'single';
+    step: SapporoSingleSeriesStep;
+    row: SapporoSingleSeriesStep['rows'][number];
+    steps: SapporoWeekendResult['steps'];
+  }
+  | {
+    kind: 'two';
+    step: SapporoTwoSeriesStep;
+    row: SapporoTwoSeriesStep['rows'][number];
+    steps: SapporoWeekendResult['steps'];
+    jumpIndex?: 1 | 2;
+  };
+
+function getRound1Positions(
+  steps: SapporoWeekendResult['steps'],
+  step: SapporoTwoSeriesStep
+): Map<string, number> {
+  const round1 = steps.find(
+    (s) =>
+      s.kind === 'single' &&
+      s.day === step.day &&
+      s.eventLabel === step.eventLabel &&
+      s.seriesLabel === 'Seria 1'
+  ) as SapporoSingleSeriesStep | undefined;
+  if (!round1) return new Map();
+  const map = new Map<string, number>();
+  round1.rows.forEach((row) => map.set(row.jumperId, row.position));
+  return map;
+}
+
+function getRound2Positions(step: SapporoTwoSeriesStep): Map<string, number> {
+  const rows = step.rows
+    .filter((row) => row.jump2 != null && row.jump2Points != null)
+    .map((row) => ({
+      jumperId: row.jumperId,
+      bib: row.bib,
+      points: row.jump2Points ?? row.jump2?.points ?? 0,
+    }))
+    .sort((a, b) => (b.points - a.points) || (b.bib - a.bib));
+  const map = new Map<string, number>();
+  rows.forEach((row, idx) => map.set(row.jumperId, idx + 1));
+  return map;
+}
+
+function SapporoJumpDetails({
+  details,
+  onClose,
+}: {
+  details: SapporoDetails;
+  onClose: () => void;
+}): JSX.Element {
+  const isTwo = details.kind === 'two';
+  const scoring = HILL_PARAMS['sapporo-hs137']!;
+  const includeStyle = details.step.eventLabel !== 'Trening' && details.step.eventLabel !== 'Seria próbna';
+  const rowAny = details.row as typeof details.row & {
+    jump1Distance?: number;
+    jump1Points?: number;
+    jump1?: {
+      distance: number;
+      points: number;
+      gateDelta: number;
+      wind: { average: number; instability: number };
+      landing: number;
+      stylePoints?: number;
+      styleNotes?: number[];
+    };
+    jump2?: {
+      distance: number;
+      points: number;
+      gateDelta: number;
+      wind: { average: number; instability: number };
+      landing: number;
+      stylePoints?: number;
+      styleNotes?: number[];
+    } | null;
+  };
+  const fallbackWind = { average: 0, instability: 0 };
+  const preferredJump =
+    details.kind === 'two'
+      ? details.jumpIndex ?? (rowAny.jump2 ? 2 : 1)
+      : 1;
+  const chosen = (isTwo
+    ? (preferredJump === 2 ? rowAny.jump2 ?? rowAny.jump1 : rowAny.jump1 ?? rowAny.jump2) ?? {
+      distance: rowAny.jump1Distance ?? 0,
+      points: rowAny.jump1Points ?? 0,
+      gateDelta: 0,
+      wind: fallbackWind,
+      landing: 'telemark',
+    }
+    : rowAny) as {
+      distance: number;
+      points: number;
+      gateDelta?: number;
+      wind?: { average: number; instability: number };
+      landing: 'telemark' | 'parallel' | 'touchDown' | 'fall';
+      stylePoints?: number;
+      styleNotes?: number[];
+    };
+  const wind = chosen.wind ?? fallbackWind;
+  const gateDelta = chosen.gateDelta ?? 0;
+  const baseGate = isTwo ? (rowAny.jump2 ? details.step.gate2 : details.step.gate1) : details.step.gate;
+  const gateValue = baseGate + gateDelta;
+  const finalStep = details.steps.find(
+    (s) =>
+      s.kind === 'two' &&
+      s.day === details.step.day &&
+      s.eventLabel === details.step.eventLabel &&
+      s.seriesLabel === 'Wyniki końcowe'
+  ) as SapporoTwoSeriesStep | undefined;
+  const hasTwoSeries = Boolean(finalStep);
+  const canShowRoundPosition =
+    hasTwoSeries && (details.step.seriesLabel === 'Seria 1' || isTwo);
+  const round1Positions = finalStep ? getRound1Positions(details.steps, finalStep) : null;
+  const round2Positions = finalStep ? getRound2Positions(finalStep) : null;
+  const round1Position = round1Positions?.get(details.row.jumperId) ?? null;
+  const round2Position = round2Positions?.get(details.row.jumperId) ?? null;
+  const roundLabel = 'Pozycja w rundzie';
+  const roundPosition =
+    details.step.seriesLabel === 'Seria 1'
+      ? details.row.position
+      : (preferredJump === 2 ? round2Position : round1Position);
+  const windPoints =
+    wind.average >= 0
+      ? -wind.average * scoring.windHeadwindPerMs
+      : Math.abs(wind.average) * scoring.windTailwindPerMs;
+  const gatePoints = -gateDelta * scoring.pointsPerGate;
+
+  return (
+    <>
+      <div
+        className="competition-screen__tooltip-backdrop"
+        onClick={onClose}
+        aria-hidden
+      />
+      <div
+        className="competition-screen__tooltip"
+        style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+        role="dialog"
+      >
+        <div className="competition-screen__details-content">
+          <div className="competition-screen__details-header">
+            <span className="competition-screen__details-name">
+              {countryToFlag(countryFromJumperId(details.row.jumperId))} {jumperDisplayName(details.row.jumperId)}
+            </span>
+            <span className="competition-screen__details-bib">{details.row.bib}</span>
+          </div>
+          <div className="competition-screen__details-hero">
+            <span>Odległość</span>
+            <strong>{chosen.distance.toFixed(1)} m</strong>
+            <span>Miejsce</span>
+            <strong>{details.row.position}</strong>
+            {canShowRoundPosition && (
+              <>
+                <span>{roundLabel}</span>
+                <strong>{roundPosition ?? '—'}</strong>
+              </>
+            )}
+            <span>Punkty</span>
+            <strong>{chosen.points.toFixed(1)}</strong>
+          </div>
+          <div className="competition-screen__details-grid">
+            <span>Wiatr (avg)</span>
+            <strong className={valColorClass(wind.average, 'wind')}>
+              {wind.average.toFixed(2)} m/s
+            </strong>
+            <span>Belka</span>
+            <strong>
+              {gateValue}
+              {gateDelta !== 0 && (
+                <span className={`competition-screen__gate-delta competition-screen__gate-delta--${gateDelta > 0 ? 'plus' : 'minus'}`}>
+                  {' '}({gateDelta > 0 ? '+' : ''}{gateDelta})
+                </span>
+              )}
+            </strong>
+            <span>Rek. wiatr</span>
+            <strong className={valColorClass(windPoints, 'comp')}>
+              {windPoints.toFixed(1)}
+            </strong>
+            <span>Rek. belka</span>
+            <strong className={valColorClass(gatePoints, 'comp')}>
+              {gatePoints.toFixed(1)}
+            </strong>
+            {includeStyle && (
+              <>
+                <span>Noty</span>
+                <strong>{chosen.stylePoints != null ? formatStylePoints(chosen.stylePoints) : '—'}</strong>
+                <div className="competition-screen__style-notes-row">
+                  <strong className="competition-screen__style-notes">{formatStyleNotes(chosen.styleNotes)}</strong>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 /** Kompaktowy podgląd wyników Sapporo (do użycia np. na ekranie powołań). */
 export interface SapporoResultsPreviewProps {
   result: SapporoWeekendResult | null;
@@ -62,6 +277,7 @@ export const SapporoResultsPreview = ({
 }: SapporoResultsPreviewProps): JSX.Element => {
   const highlightRow = (jumperId: string): boolean =>
     Boolean(highlightCountry && countryFromJumperId(jumperId) === highlightCountry);
+  const [details, setDetails] = useState<SapporoDetails | null>(null);
 
   if (error || !result) {
     return (
@@ -74,7 +290,10 @@ export const SapporoResultsPreview = ({
     );
   }
 
-  const steps = result.steps;
+  const allSteps = result.steps;
+  const steps = allSteps.filter(
+    (step) => !(step.eventLabel === 'Konkurs indywidualny' && step.seriesLabel === 'Seria 1')
+  );
   const step = steps[selectedStepIndex];
   const dayNames: Record<string, string> = { friday: 'Piątek', saturday: 'Sobota', sunday: 'Niedziela' };
   const phaseTitle = step
@@ -107,12 +326,21 @@ export const SapporoResultsPreview = ({
             {phaseTitle}
           </p>
           {step.kind === 'single' ? (
-            <SingleSeriesTable step={step} highlightRow={highlightRow} />
+            <SingleSeriesTable
+              step={step}
+              highlightRow={highlightRow}
+              onRowClick={(row) => setDetails({ kind: 'single', step, row, steps: allSteps })}
+            />
           ) : (
-            <TwoSeriesTable step={step} highlightRow={highlightRow} />
+            <TwoSeriesTable
+              step={step}
+              highlightRow={highlightRow}
+              onRowClick={(row, jumpIndex) => setDetails({ kind: 'two', step, row, steps: allSteps, jumpIndex })}
+            />
           )}
         </div>
       )}
+      {details && <SapporoJumpDetails details={details} onClose={() => setDetails(null)} />}
     </div>
   );
 };
@@ -127,6 +355,7 @@ interface SapporoResultsProps {
 
 export const SapporoResults = ({ config, onComplete, onBack }: SapporoResultsProps): JSX.Element => {
   const [showExitDialog, setShowExitDialog] = useState(false);
+  const [details, setDetails] = useState<SapporoDetails | null>(null);
   const { result, error } = useMemo(() => {
     try {
       const { roster, worldCupOrderIds } = buildSapporoRoster();
@@ -171,7 +400,10 @@ export const SapporoResults = ({ config, onComplete, onBack }: SapporoResultsPro
     );
   }
 
-  const steps = result.steps;
+  const allSteps = result.steps;
+  const steps = allSteps.filter(
+    (step) => !(step.eventLabel === 'Konkurs indywidualny' && step.seriesLabel === 'Seria 1')
+  );
   const unlockedCount = stepIndex + 1;
   const visibleSteps = steps.slice(0, unlockedCount);
   const stepToShow = steps[selectedTabIndex];
@@ -246,6 +478,7 @@ export const SapporoResults = ({ config, onComplete, onBack }: SapporoResultsPro
           </div>
         </div>
       )}
+      {details && <SapporoJumpDetails details={details} onClose={() => setDetails(null)} />}
       <header className="sapporo-results__header">
         {onBack && (
           <button
@@ -283,14 +516,14 @@ export const SapporoResults = ({ config, onComplete, onBack }: SapporoResultsPro
       <section className="sapporo-results__panel" role="tabpanel" aria-label={phaseTitle}>
         <div className="sapporo-results__panel-head">
           <h2 className="sapporo-results__phase-title">{phaseTitle}</h2>
-          {stepToShow.kind === 'single' && (
+          {/* {stepToShow.kind === 'single' && (
             <span className="sapporo-results__meta">Belka {stepToShow.gate}</span>
-          )}
-          {stepToShow.kind === 'two' && (
+          )} */}
+          {/* {stepToShow.kind === 'two' && (
             <span className="sapporo-results__meta">
               Belka {stepToShow.gate1} / {stepToShow.gate2}
             </span>
-          )}
+          )} */}
         </div>
         {/* {isCoachWithCountry && (
           <p className="sapporo-results__legend">
@@ -299,9 +532,17 @@ export const SapporoResults = ({ config, onComplete, onBack }: SapporoResultsPro
         )} */}
         <div className="sapporo-results__table-wrap">
           {stepToShow.kind === 'single' ? (
-            <SingleSeriesTable step={stepToShow} highlightRow={highlightRow} />
+            <SingleSeriesTable
+              step={stepToShow}
+              highlightRow={highlightRow}
+              onRowClick={(row) => setDetails({ kind: 'single', step: stepToShow, row, steps: allSteps })}
+            />
           ) : (
-            <TwoSeriesTable step={stepToShow} highlightRow={highlightRow} />
+            <TwoSeriesTable
+              step={stepToShow}
+              highlightRow={highlightRow}
+              onRowClick={(row, jumpIndex) => setDetails({ kind: 'two', step: stepToShow, row, steps: allSteps, jumpIndex })}
+            />
           )}
         </div>
       </section>
@@ -325,9 +566,10 @@ export const SapporoResults = ({ config, onComplete, onBack }: SapporoResultsPro
 interface SingleSeriesTableProps {
   step: SapporoSingleSeriesStep;
   highlightRow: (jumperId: string) => boolean;
+  onRowClick?: (row: SapporoSingleSeriesStep['rows'][number]) => void;
 }
 
-function SingleSeriesTable({ step, highlightRow }: SingleSeriesTableProps): JSX.Element {
+function SingleSeriesTable({ step, highlightRow, onRowClick }: SingleSeriesTableProps): JSX.Element {
   return (
     <table className="sapporo-results__table" role="grid">
       <thead>
@@ -342,7 +584,13 @@ function SingleSeriesTable({ step, highlightRow }: SingleSeriesTableProps): JSX.
         {step.rows.map((row) => (
           <tr
             key={`${row.bib}-${row.jumperId}`}
-            className={highlightRow(row.jumperId) ? 'sapporo-results__row--highlight' : ''}
+            className={[
+              highlightRow(row.jumperId) ? 'sapporo-results__row--highlight' : '',
+              onRowClick ? 'sapporo-results__row--clickable' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            onClick={onRowClick ? () => onRowClick(row) : undefined}
           >
             <td className="sapporo-results__cell-pos">{row.position}</td>
             <td className="sapporo-results__cell-zawodnik">
@@ -363,9 +611,10 @@ function SingleSeriesTable({ step, highlightRow }: SingleSeriesTableProps): JSX.
 interface TwoSeriesTableProps {
   step: SapporoTwoSeriesStep;
   highlightRow: (jumperId: string) => boolean;
+  onRowClick?: (row: SapporoTwoSeriesStep['rows'][number], jumpIndex?: 1 | 2) => void;
 }
 
-function TwoSeriesTable({ step, highlightRow }: TwoSeriesTableProps): JSX.Element {
+function TwoSeriesTable({ step, highlightRow, onRowClick }: TwoSeriesTableProps): JSX.Element {
   return (
     <table className="sapporo-results__table" role="grid">
       <thead>
@@ -382,7 +631,17 @@ function TwoSeriesTable({ step, highlightRow }: TwoSeriesTableProps): JSX.Elemen
         {step.rows.map((row) => (
           <tr
             key={`${row.bib}-${row.jumperId}`}
-            className={highlightRow(row.jumperId) ? 'sapporo-results__row--highlight' : ''}
+            className={[
+              highlightRow(row.jumperId) ? 'sapporo-results__row--highlight' : '',
+              onRowClick ? 'sapporo-results__row--clickable' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            onClick={
+              onRowClick
+                ? () => onRowClick(row, row.jump2Distance != null ? 2 : 1)
+                : undefined
+            }
           >
             <td className="sapporo-results__cell-pos">{row.position}</td>
             <td className="sapporo-results__cell-bib">{row.bib}</td>
@@ -392,8 +651,30 @@ function TwoSeriesTable({ step, highlightRow }: TwoSeriesTableProps): JSX.Elemen
               </span>
               <span className="sapporo-results__jumper-name">{jumperDisplayName(row.jumperId)}</span>
             </td>
-            <td className="sapporo-results__cell-num">{row.jump1Distance.toFixed(1)} m</td>
-            <td className="sapporo-results__cell-num">
+            <td
+              className="sapporo-results__cell-num"
+              onClick={
+                onRowClick
+                  ? (e) => {
+                    e.stopPropagation();
+                    onRowClick(row, 1);
+                  }
+                  : undefined
+              }
+            >
+              {row.jump1Distance.toFixed(1)} m
+            </td>
+            <td
+              className="sapporo-results__cell-num"
+              onClick={
+                onRowClick && row.jump2Distance != null
+                  ? (e) => {
+                    e.stopPropagation();
+                    onRowClick(row, 2);
+                  }
+                  : undefined
+              }
+            >
               {row.jump2Distance != null ? `${row.jump2Distance.toFixed(1)} m` : '—'}
             </td>
             <td className="sapporo-results__cell-num sapporo-results__cell-total">

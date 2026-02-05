@@ -15,7 +15,7 @@ sobota, 31 stycznia
 niedziela, 1 lutego
 16.00 - konkurs indywidualny mężczyzn
 
-# Harmonogram skoków na Igrzyskach
+# Harmonogram skoków w Predazzo
 – czwartek, 5 lutego
 17:00 – oficjalny trening kobiet (HS107) (3 serie)
 20:00 – oficjalny trening mężczyzn (HS107)  (3 serie)

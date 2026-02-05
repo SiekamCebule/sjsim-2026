@@ -27,13 +27,43 @@ function jumperKey(j: Jumper): string {
   return `${j.country}:${j.name}:${j.surname}`;
 }
 
+function hasDetailedSapporoResult(result: SapporoWeekendResult | null): boolean {
+  if (!result || result.steps.length === 0) return false;
+  return result.steps.every((step) => {
+    const requiresStyle = step.eventLabel !== 'Trening' && step.eventLabel !== 'Seria próbna';
+    if (step.rows.length === 0) return false;
+    const row = step.rows[0];
+    if (step.kind === 'single') {
+      const wind = (row as { wind?: { average: number; instability: number } }).wind;
+      const gateDelta = (row as { gateDelta?: number }).gateDelta;
+      const stylePoints = (row as { stylePoints?: number }).stylePoints;
+      const hasWind = wind != null && typeof wind.average === 'number' && typeof wind.instability === 'number';
+      const hasGate = typeof gateDelta === 'number';
+      const hasStyle = !requiresStyle || typeof stylePoints === 'number';
+      return hasWind && hasGate && hasStyle;
+    }
+    const jump = (row as {
+      jump2?: { wind?: { average: number; instability: number }; gateDelta?: number; stylePoints?: number };
+      jump1?: { wind?: { average: number; instability: number }; gateDelta?: number; stylePoints?: number };
+    }).jump2 ?? (row as { jump1?: { wind?: { average: number; instability: number }; gateDelta?: number; stylePoints?: number } }).jump1;
+    if (!jump) return false;
+    const wind = jump.wind;
+    const gateDelta = jump.gateDelta;
+    const stylePoints = jump.stylePoints;
+    const hasWind = wind != null && typeof wind.average === 'number' && typeof wind.instability === 'number';
+    const hasGate = typeof gateDelta === 'number';
+    const hasStyle = !requiresStyle || typeof stylePoints === 'number';
+    return hasWind && hasGate && hasStyle;
+  });
+}
+
 export interface CallupsAfterSapporoProps {
   config: GameConfigState;
   /** Wynik weekendu Sapporo (z ekranu wyników) – używany do podglądu i powołań botów. */
   sapporoResult: SapporoWeekendResult | null;
   onComplete: (config: GameConfigState) => void;
   onBack: () => void;
-  /** Gdy false, nie pokazuj tabeli wyników Sapporo po lewej (np. Dyrektor → Od razu Olimpiada). */
+  /** Gdy false, nie pokazuj tabeli wyników Sapporo po lewej (np. Dyrektor → Od razu Predazzo). */
   showSapporoPreview?: boolean;
 }
 
@@ -48,7 +78,9 @@ export const CallupsAfterSapporo = ({
   const country = config.selectedCountry ?? '';
 
   const fallback = useMemo(() => {
-    if (sapporoResultProp) return { result: sapporoResultProp, error: null as string | null };
+    if (sapporoResultProp && hasDetailedSapporoResult(sapporoResultProp)) {
+      return { result: sapporoResultProp, error: null as string | null };
+    }
     try {
       const { roster, worldCupOrderIds } = buildSapporoRoster();
       const random = createDefaultRandom();
@@ -69,7 +101,9 @@ export const CallupsAfterSapporo = ({
     }
   }, [sapporoResultProp]);
 
-  const sapporoResult = sapporoResultProp ?? fallback.result;
+  const sapporoResult = (sapporoResultProp && hasDetailedSapporoResult(sapporoResultProp))
+    ? sapporoResultProp
+    : fallback.result;
   const sapporoError = fallback.error;
 
   const worldCupOrderIds = useMemo(() => getWorldCupOrderAll(), []);

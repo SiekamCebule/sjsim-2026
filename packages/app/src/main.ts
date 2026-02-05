@@ -1,6 +1,7 @@
 import path from 'node:path';
 import process from 'node:process';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
+import { getSaveSummary, loadGame, saveGame } from './persistence';
 
 const isDev = Boolean(process.env.VITE_DEV_SERVER_URL);
 
@@ -50,10 +51,19 @@ const registerAppLifecycle = (): void => {
   });
 };
 
+const registerIpcHandlers = (): void => {
+  ipcMain.handle('sjSim:saveGame', (_event, payload) => {
+    saveGame(payload);
+  });
+  ipcMain.handle('sjSim:loadGame', () => loadGame());
+  ipcMain.handle('sjSim:getSaveSummary', () => getSaveSummary());
+};
+
 app
   .whenReady()
   .then(async () => {
     registerAppLifecycle();
+    registerIpcHandlers();
     await createWindow();
   })
   .catch((error) => {

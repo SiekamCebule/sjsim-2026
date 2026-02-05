@@ -1,7 +1,7 @@
 /**
- * Design system — Sj.Sim Predazzo Edition
+ * Design system — Sj.Sim Predazzo
  * Jedno miejsce: kolory, typografia, odstępy, obramowania.
- * Zgodne z REQUIREMENTS.md: zimno, olimpijsko, ciemno.
+ * Zgodne z REQUIREMENTS.md: zimno, ciemno.
  */
 
 :root {
@@ -84,4 +84,18 @@
   /* ——— Transitions ——— */
   --transition-fast: 0.15s ease;
   --transition-normal: 0.2s ease;
+}
+
+:root[data-theme='deep-navy'] {
+  --color-bg: #050b14;
+  --color-bg-overlay: rgba(5, 11, 20, 0.9);
+  --color-surface: #0a1524;
+  --color-surface-elevated: #0d1b2e;
+  --color-surface-hover: #11233a;
+  --color-surface-hover-primary: #0f2036;
+  --color-text: #e6edf5;
+  --color-text-muted: #8a9ab0;
+  --color-text-subtle: #5d6f87;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color-strong: rgba(255, 255, 255, 0.14);
 }

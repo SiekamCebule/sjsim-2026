@@ -183,6 +183,32 @@ button.main-menu__card {
   font-weight: var(--font-semibold);
 }
 
+.main-menu__settings-attribution {
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-color);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.main-menu__settings-attribution p {
+  margin: 0 0 var(--space-2);
+}
+
+.main-menu__settings-attribution p:last-child {
+  margin-bottom: 0;
+}
+
+.main-menu__settings-attribution a {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+}
+
+.main-menu__settings-attribution a:hover {
+  color: var(--color-text);
+}
+
 .main-menu__settings-dialog-actions {
   margin-top: var(--space-5);
   display: flex;
@@ -210,6 +236,20 @@ button.main-menu__card {
   gap: var(--space-4);
   font-size: var(--text-sm);
   color: var(--color-text-muted);
+}
+
+.main-menu__settings-row--checkbox {
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+.main-menu__settings-row--checkbox span {
+  user-select: none;
+}
+
+.main-menu__settings-checkbox {
+  margin-right: var(--space-2);
+  accent-color: var(--color-primary, #3b82f6);
 }
 
 .main-menu__settings-select {
@@ -251,6 +291,14 @@ button.main-menu__card {
 .main-menu__save-list>li {
   margin: 0;
   padding: 0;
+}
+
+.main-menu__save-empty {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(17, 27, 49, 0.55);
+  border-radius: var(--radius-md);
 }
 
 .main-menu__save-slot {

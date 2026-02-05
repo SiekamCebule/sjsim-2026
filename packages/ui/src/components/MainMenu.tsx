@@ -1,13 +1,22 @@
 import type { JSX } from 'react';
 import { useState } from 'react';
-import menuBg from '@assets/predazzo.jpg';
+import menuBg from '@assets/predazzo_hq.jpeg';
 
 const APP_VERSION = '1.0.0';
 
 interface MainMenuProps {
   onNewGame: () => void;
+  onLoadGame: () => void;
   autoJumpIntervalMs: number;
   onAutoJumpIntervalChange: (ms: number) => void;
+  saveSummary: {
+    hasSave: boolean;
+    meta: { location: string; summary: string; lastPlayed: string };
+  } | null;
+  theme: 'default' | 'deep-navy';
+  onThemeChange: (theme: 'default' | 'deep-navy') => void;
+  snowEnabled: boolean;
+  onSnowChange: (enabled: boolean) => void;
 }
 
 const AUTO_JUMP_OPTIONS = [
@@ -23,8 +32,14 @@ const AUTO_JUMP_OPTIONS = [
 
 export const MainMenu = ({
   onNewGame,
+  onLoadGame,
   autoJumpIntervalMs,
   onAutoJumpIntervalChange,
+  saveSummary,
+  theme,
+  onThemeChange,
+  snowEnabled,
+  onSnowChange,
 }: MainMenuProps): JSX.Element => {
   const [showSettings, setShowSettings] = useState(false);
 
@@ -37,7 +52,7 @@ export const MainMenu = ({
       <header className="main-menu__header">
         <div className="main-menu__title-block">
           <h1 className="main-menu__title">Sj.Sim</h1>
-          <p className="main-menu__subtitle">Predazzo Edition</p>
+          <p className="main-menu__subtitle">Predazzo 2026</p>
         </div>
         <button
           type="button"
@@ -74,13 +89,18 @@ export const MainMenu = ({
             Wczytaj rozgrywkę
           </h2>
           <ul className="main-menu__save-list" role="list">
-            <li>
-              <SaveSlot
-                location="Predazzo (Austria)"
-                summary="Konkurs mężczyzn, skocznia normalna"
-                lastPlayed="1.03.2026"
-              />
-            </li>
+            {saveSummary?.hasSave ? (
+              <li>
+                <SaveSlot
+                  location={saveSummary.meta.location}
+                  summary={saveSummary.meta.summary}
+                  lastPlayed={saveSummary.meta.lastPlayed}
+                  onClick={onLoadGame}
+                />
+              </li>
+            ) : (
+              <li className="main-menu__save-empty">Brak zapisanych rozgrywek.</li>
+            )}
           </ul>
         </div>
       </section>
@@ -113,6 +133,30 @@ export const MainMenu = ({
                 ))}
               </select>
             </label>
+            <label className="main-menu__settings-row">
+              <span>Motyw</span>
+              <select
+                className="main-menu__settings-select"
+                value={theme}
+                onChange={(e) => onThemeChange(e.target.value as 'default' | 'deep-navy')}
+              >
+                <option value="default">Standardowy</option>
+                <option value="deep-navy">Navy</option>
+              </select>
+            </label>
+            <label className="main-menu__settings-row main-menu__settings-row--checkbox">
+              <input
+                type="checkbox"
+                className="main-menu__settings-checkbox"
+                checked={snowEnabled}
+                onChange={(e) => onSnowChange(e.target.checked)}
+              />
+              <span>Efekt śniegu na dashboardzie</span>
+            </label>
+            <div className="main-menu__settings-attribution">
+              <p>Tło: <a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener noreferrer">Manuguf, CC BY-SA 3.0</a>, via Wikimedia Commons</p>
+              <p>Ikony pogodowe: <a href="https://www.amcharts.com" target="_blank" rel="noopener noreferrer">amCharts.com</a></p>
+            </div>
             <div className="main-menu__settings-dialog-actions">
               <button
                 type="button"
@@ -133,12 +177,14 @@ const SaveSlot = ({
   location,
   summary,
   lastPlayed,
+  onClick,
 }: {
   location: string;
   summary: string;
   lastPlayed: string;
+  onClick: () => void;
 }): JSX.Element => (
-  <button type="button" className="main-menu__save-slot" disabled title="Wczytanie rozgrywki — wkrótce">
+  <button type="button" className="main-menu__save-slot" onClick={onClick}>
     <span className="main-menu__save-slot-icon" aria-hidden>
       <SaveFileIcon />
     </span>

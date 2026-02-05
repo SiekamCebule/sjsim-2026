@@ -17,15 +17,15 @@ export function distancePoints(
   return 60 + delta * params.pointsPerMeter;
 }
 
-/** Punkty za belkę: gateDelta * pointsPerGate (obniżenie = ujemny delta = odejmujemy punkty od odległości, więc dodajemy kompensatę). */
+/** Punkty za belkę: obniżenie belki (ujemny delta) = dodatnia kompensata, podwyższenie = ujemna. */
 export function gatePoints(gateDelta: number, params: HillScoringParams): number {
-  return gateDelta * params.pointsPerGate;
+  return -gateDelta * params.pointsPerGate;
 }
 
-/** Punkty za wiatr: dodatni average = wiatr pod narty = dodajemy; ujemny = w plecy = odejmujemy. */
+/** Punkty za wiatr: dodatni average = wiatr pod narty = ujemna kompensata; ujemny = w plecy = dodatnia. */
 export function windPoints(wind: Wind, params: HillScoringParams): number {
-  if (wind.average >= 0) return wind.average * params.windHeadwindPerMs;
-  return wind.average * params.windTailwindPerMs;
+  if (wind.average >= 0) return -wind.average * params.windHeadwindPerMs;
+  return Math.abs(wind.average) * params.windTailwindPerMs;
 }
 
 /** Kontekst do not za styl (wzorowane na JudgesSimulator z C#). */
@@ -40,7 +40,15 @@ export interface StylePointsContext {
 }
 
 function ensureNoteRange(x: number): number {
-  return Math.max(0, Math.min(20, x));
+  return Math.max(1, Math.min(20, x));
+}
+
+function roundToHalf(x: number): number {
+  return Math.round(x * 2) / 2;
+}
+
+function normalizeNote(x: number): number {
+  return roundToHalf(ensureNoteRange(x));
 }
 
 /** Losowa korekta bazy noty zależna od rodzaju lądowania (JudgeNoteBaseRandom). */
@@ -82,8 +90,12 @@ function judgeNoteDistanceBonus(distance: number, kPoint: number, realHs: number
   return (distanceClampedToHs - kPoint) / (kPoint * kMultiplier);
 }
 
-/** Noty za styl: 5 sędziów 0–20, odrzucamy 2 skrajne, suma 3 środkowych (max 60). Wzorowane na C# JudgesSimulator. */
-export function stylePoints(ctx: StylePointsContext): number {
+export interface StyleNotesResult {
+  notes: number[];
+  sum: number;
+}
+
+function calculateStyleNotes(ctx: StylePointsContext): StyleNotesResult {
   const { landing, distance, realHs, kPoint, landingTendency, random } = ctx;
   const noteAdditionByOneLandingSkill = 0.3;
   let baseNote = 17.5 + (landingTendency - 0) * noteAdditionByOneLandingSkill;
@@ -92,11 +104,22 @@ export function stylePoints(ctx: StylePointsContext): number {
   baseNote = ensureNoteRange(baseNote + judgeNoteBaseRandom(landing, random));
 
   const notes = Array.from({ length: 5 }, () =>
-    ensureNoteRange(baseNote + judgeNoteSpecificRandom(landing, random))
+    normalizeNote(baseNote + judgeNoteSpecificRandom(landing, random))
   );
   const sorted = [...notes].sort((a, b) => a - b);
   const sumMiddle = sorted[1]! + sorted[2]! + sorted[3]!;
-  return Math.max(0, Math.min(60, sumMiddle));
+  /** Noty za styl w rzeczywistości podawane w połówkach (0.5); suma też powinna mieć krok 0.5. */
+  const roundedSum = roundToHalf(sumMiddle);
+  return { notes, sum: Math.max(0, Math.min(60, roundedSum)) };
+}
+
+/** Noty za styl: 5 sędziów 1–20, odrzucamy 2 skrajne, suma 3 środkowych (max 60). Wzorowane na C# JudgesSimulator. */
+export function stylePoints(ctx: StylePointsContext): number {
+  return calculateStyleNotes(ctx).sum;
+}
+
+export function styleNotes(ctx: StylePointsContext): StyleNotesResult {
+  return calculateStyleNotes(ctx);
 }
 
 /** Czy w tym rodzaju serii liczą się noty za styl (kwalifikacje i konkursy; nie w treningu/seriach próbnych). */

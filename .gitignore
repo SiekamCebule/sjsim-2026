@@ -21,3 +21,5 @@ Thumbs.db
 
 # Optional: Cursor IDE rules (uncomment if you don't want to commit them)
 # .cursor
+
+fakeNames.csv

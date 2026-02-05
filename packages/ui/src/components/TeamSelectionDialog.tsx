@@ -1,13 +1,16 @@
 import type { JSX } from 'react';
 import { useMemo, useState } from 'react';
 import type { ScheduleItem } from '../data/predazzoSchedule';
-import { countryToFlag, getMenTeams, getWomenTeams, type Jumper } from '../data/jumpersData';
+import { countryToFlag, type Jumper } from '../data/jumpersData';
+import type { GameDataSnapshot } from '../data/gameDataSnapshot';
+import { resolveMenTeams, resolveWomenTeams } from '../data/gameDataSnapshot';
 import type { GameConfigState } from './GameConfig';
 import './team-selection-dialog.css';
 
 interface TeamSelectionDialogProps {
   event: ScheduleItem;
   config: GameConfigState | null;
+  gameData?: GameDataSnapshot | null;
   onConfirm: (lineup: Jumper[]) => void;
   onCancel: () => void;
 }
@@ -49,17 +52,18 @@ function useDragList<T>(items: T[], onReorder: (next: T[]) => void): {
 export const TeamSelectionDialog = ({
   event,
   config,
+  gameData,
   onConfirm,
   onCancel,
 }: TeamSelectionDialogProps): JSX.Element => {
   const country = config?.selectedCountry ?? '';
   const menRoster = useMemo(
-    () => getMenTeams().filter((j) => j.country === country),
-    [country]
+    () => resolveMenTeams(gameData).filter((j) => j.country === country),
+    [country, gameData]
   );
   const womenRoster = useMemo(
-    () => getWomenTeams().filter((j) => j.country === country),
-    [country]
+    () => resolveWomenTeams(gameData).filter((j) => j.country === country),
+    [country, gameData]
   );
 
   const [selectedMen, setSelectedMen] = useState<Jumper[]>(() => menRoster.slice(0, 2));

@@ -20,12 +20,13 @@ export enum JuryBravery {
 function allowedOvershootsPercent(bravery: JuryBravery): number {
   switch (bravery) {
     case JuryBravery.VeryHigh:
-      return 5 / 50;
+      return 10 / 50;
     case JuryBravery.High:
-      return 3 / 50;
+      return 5 / 50;
     case JuryBravery.Medium:
-      return 1 / 50;
+      return 2 / 50;
     case JuryBravery.Low:
+      return 1 / 50;
     case JuryBravery.VeryLow:
       return 0 / 50;
     default:
@@ -126,18 +127,19 @@ export function selectStartingGate(params: SelectStartingGateParams): number {
 
   switch (juryBravery) {
     case JuryBravery.VeryLow:
-      currentGate -= 2;
-      break;
-    case JuryBravery.Low:
       currentGate -= 1;
+      break;
+    case JuryBravery.High:
+      currentGate += 1;
+      break;
+    case JuryBravery.VeryHigh:
+      currentGate += 1;
       break;
     default:
       break;
   }
 
   if (kPoint >= 180) currentGate--;
-
-  currentGate--;
 
   return currentGate;
 }

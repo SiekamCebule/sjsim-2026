@@ -38,7 +38,7 @@ Position,Country,Name,Surname,Points
 37,SUI,Sandro,Hauswirth,72
 38,SLO,Rok,Oblak,69
 39,POL,Dawid,Kubacki,54
-39,POL,Pawel,Wasek,54
+39,POL,Paweł,Wąsek,54
 41,USA,Kevin,Bickner,53
 42,AUT,Clemens,Aigner,48
 43,JPN,Sakutaro,Kobayashi,40
@@ -46,7 +46,7 @@ Position,Country,Name,Surname,Points
 45,SUI,Simon,Ammann,31
 45,KAZ,Ilja,Miziernych,31
 47,ITA,Alex,Insam,28
-47,UKR,Danil,Wasiljew,28
+47,UKR,Danil,Vassilyev,28
 47,NOR,Isak Andreas,Langmo,28
 50,SUI,Felix,Trunz,19
 51,NOR,Robin,Pedersen,16
@@ -57,7 +57,7 @@ Position,Country,Name,Surname,Points
 55,AUT,Markus,Mueller,10
 57,USA,Tate,Frantz,9
 57,SUI,Juri,Kesseli,9
-57,UKR,Jewhen,Marusiak,9
+57,UKR,Yevhen,Marusiak,9
 57,FIN,Eetu,Nousiainen,9
 61,FIN,Jarkko,Maatta,7
 62,USA,Andrew,Urlaub,5
@@ -65,7 +65,7 @@ Position,Country,Name,Surname,Points
 64,SUI,Killian,Peier,4
 64,JPN,Junshiro,Kobayashi,4
 66,POL,Aleksander,Zniszczol,3
-67,UKR,Witalij,Kalinichenko,2
+67,UKR,Vitaliy,Kalinichenko,2
 67,POL,Klemens,Joniak,2
 69,CAN,Mackenzie,Boyd-Clowes,1
 69,SLO,Zak,Mogel,1

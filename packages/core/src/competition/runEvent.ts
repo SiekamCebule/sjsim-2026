@@ -98,8 +98,9 @@ function runOneJump(
     scoring.windPoints(wind, hillScoring);
 
   let stylePoints: number | undefined;
+  let styleNotes: number[] | undefined;
   if (scoring.hasStylePoints(kind)) {
-    stylePoints = scoring.stylePoints({
+    const styleResult = scoring.styleNotes({
       landing: jump.landing,
       distance: jump.distance,
       realHs,
@@ -107,6 +108,8 @@ function runOneJump(
       landingTendency: entry.jumper.skills.landingTendency,
       random: deps.random,
     });
+    stylePoints = styleResult.sum;
+    styleNotes = styleResult.notes;
     points += stylePoints;
   }
   points = Math.max(0, points);
@@ -118,6 +121,7 @@ function runOneJump(
     gateDelta,
     wind,
     ...(stylePoints !== undefined && { stylePoints }),
+    ...(styleNotes !== undefined && { styleNotes }),
   };
   return result;
 }

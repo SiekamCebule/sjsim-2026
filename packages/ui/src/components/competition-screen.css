@@ -85,6 +85,40 @@
   opacity: 0.75;
 }
 
+.competition-screen__header-utility {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+  opacity: 0.82;
+}
+
+.competition-screen__header-utility .competition-screen__auto--header {
+  font-size: 0.8rem;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.competition-screen__header-utility .competition-screen__btn--utility {
+  padding: 0.4rem 0.65rem;
+  font-size: 0.78rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--color-text);
+  opacity: 0.9;
+}
+
+.competition-screen__header-utility .competition-screen__btn--utility:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
+.competition-screen__header-utility .competition-screen__btn--utility:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .competition-screen__header-actions {
   display: flex;
   align-items: center;
@@ -262,6 +296,10 @@
   font-weight: 600;
 }
 
+.competition-screen__cell-clickable {
+  cursor: pointer;
+}
+
 .competition-screen__team-table {
   display: flex;
   flex-direction: column;
@@ -283,10 +321,39 @@
   font-weight: 600;
 }
 
+.competition-screen__team-rounds {
+  margin-top: 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.competition-screen__team-round-chip {
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .competition-screen__team-sub {
   margin-top: 0.6rem;
   display: grid;
   gap: 0.4rem;
+}
+
+.competition-screen__team-subheader {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  padding: 0 0.35rem;
+}
+
+.competition-screen__team-subheader-cell {
+  text-align: center;
 }
 
 .competition-screen__team-subrow {
@@ -302,9 +369,30 @@
   cursor: pointer;
 }
 
+.competition-screen__team-subrow--grid {
+  grid-template-columns: initial;
+}
+
+.competition-screen__team-subrow:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.competition-screen__team-subname {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.competition-screen__team-subtotal {
+  text-align: center;
+  font-weight: 600;
+}
+
 .competition-screen__team-subvalue {
   opacity: 0.7;
   font-size: 0.85rem;
+  text-align: center;
 }
 
 .competition-screen__details {
@@ -329,7 +417,7 @@
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(18, 22, 28, 0.92);
+  background: #12161c;
 }
 
 .competition-screen__details-content {
@@ -377,6 +465,17 @@
   gap: 0.4rem 1rem;
   margin-top: 0.6rem;
   font-size: 0.9rem;
+}
+
+.competition-screen__style-notes {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.competition-screen__style-notes-row {
+  grid-column: 1 / -1;
+  padding-top: 0.1rem;
+  text-align: center;
 }
 
 .competition-screen__val--wind-pos {
@@ -432,9 +531,75 @@
   gap: 0.5rem;
 }
 
+.competition-screen__next-place {
+  margin-right: 0.4rem;
+  font-size: 0.85em;
+  opacity: 0.85;
+}
+
 .competition-screen__next-empty {
   opacity: 0.6;
   margin: 0;
+}
+
+.competition-screen__coach-gate {
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.competition-screen__coach-gate--header {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.competition-screen__coach-gate--header .competition-screen__coach-gate-label {
+  margin-right: 0.15rem;
+}
+
+.competition-screen__coach-gate--header .competition-screen__coach-gate-value {
+  margin-right: 0.25rem;
+}
+
+.competition-screen__coach-gate-btn {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+.competition-screen__coach-gate-95 {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.competition-screen__coach-gate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.competition-screen__coach-gate-label {
+  opacity: 0.75;
+}
+
+.competition-screen__coach-gate-value {
+  font-size: 0.95rem;
+}
+
+.competition-screen__coach-gate-hint {
+  margin: 0;
+  opacity: 0.6;
+  font-size: 0.75rem;
 }
 
 .competition-screen__to-beat {
@@ -508,6 +673,30 @@
   gap: 0.6rem;
 }
 
+.competition-screen__simulate-wrap {
+  position: relative;
+}
+
+.competition-screen__gate-change-inline {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translate(-50%, 6px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(225, 29, 72, 0.2);
+  color: var(--color-text);
+  border: 1px solid rgba(225, 29, 72, 0.5);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 .competition-screen__gate-controls {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -519,6 +708,8 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.85rem;
+  cursor: pointer;
+  user-select: none;
 }
 
 .competition-screen__btn {
@@ -588,6 +779,25 @@
 .competition-screen__dialog-text {
   margin: 0 0 1rem;
   opacity: 0.8;
+}
+
+.competition-screen__jury-select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.competition-screen__jury-select select {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 0.45rem 0.7rem;
+  background: rgba(15, 20, 26, 0.9);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.9rem;
 }
 
 .competition-screen__dialog-actions {

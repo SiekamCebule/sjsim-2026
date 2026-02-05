@@ -19,14 +19,18 @@ export interface ScheduleItem {
   hill: 'HS107' | 'HS141';
   gender: EventGender;
   label: string; // np. "III trening mężczyzn (HS107)"
+  /** Uściślenie rodzaju serii próbnej (np. duety). */
+  trialKind?: 'team_men_pairs' | 'team_mixed';
   /** Liczba serii treningowych (1–3); tylko dla type === 'training' */
   trainingSeries?: number;
   /** Czy to konkurs główny (do pogrubienia w harmonogramie) */
   isMainCompetition: boolean;
 }
 
+const EXPERIMENTAL_SJSIM = typeof __EXPERIMENTAL_SJSIM__ !== 'undefined' && __EXPERIMENTAL_SJSIM__;
+
 /** Pełna lista wydarzeń w kolejności chronologicznej. */
-export const PREDAZZO_SCHEDULE: ScheduleItem[] = [
+const PREDAZZO_SCHEDULE_FULL: ScheduleItem[] = [
   { id: '1', date: '2026-02-05', time: '17:00', type: 'training', hill: 'HS107', gender: 'women', label: 'Oficjalny trening kobiet (HS107)', trainingSeries: 3, isMainCompetition: false },
   { id: '2', date: '2026-02-05', time: '20:00', type: 'training', hill: 'HS107', gender: 'men', label: 'Oficjalny trening mężczyzn (HS107)', trainingSeries: 3, isMainCompetition: false },
   { id: '3', date: '2026-02-06', time: '09:00', type: 'training', hill: 'HS107', gender: 'women', label: 'Oficjalny trening kobiet (HS107)', trainingSeries: 3, isMainCompetition: false },
@@ -47,9 +51,15 @@ export const PREDAZZO_SCHEDULE: ScheduleItem[] = [
   { id: '18', date: '2026-02-15', time: '11:30', type: 'training', hill: 'HS141', gender: 'men', label: 'Oficjalny trening mężczyzn (HS141)', trainingSeries: 3, isMainCompetition: false },
   { id: '19', date: '2026-02-15', time: '17:30', type: 'trial', hill: 'HS141', gender: 'women', label: 'Seria próbna kobiet (HS141)', isMainCompetition: false },
   { id: '20', date: '2026-02-15', time: '18:45', type: 'individual', hill: 'HS141', gender: 'women', label: 'Konkurs indywidualny kobiet (HS141)', isMainCompetition: true },
-  { id: '21', date: '2026-02-16', time: '18:00', type: 'trial', hill: 'HS141', gender: 'men', label: 'Seria próbna mężczyzn (HS141)', isMainCompetition: false },
+  { id: '21', date: '2026-02-16', time: '18:00', type: 'trial', hill: 'HS141', gender: 'men', label: 'Seria próbna duetów mężczyzn (HS141)', trialKind: 'team_men_pairs', isMainCompetition: false },
   { id: '22', date: '2026-02-16', time: '19:00', type: 'team_men_pairs', hill: 'HS141', gender: 'men', label: 'Konkurs duetów mężczyzn (HS141)', isMainCompetition: true },
 ];
+
+const EXPERIMENTAL_EVENT_IDS = new Set(['9', '10', '11', '17', '21', '22']);
+
+export const PREDAZZO_SCHEDULE: ScheduleItem[] = EXPERIMENTAL_SJSIM
+  ? PREDAZZO_SCHEDULE_FULL.filter((item) => EXPERIMENTAL_EVENT_IDS.has(item.id))
+  : PREDAZZO_SCHEDULE_FULL;
 
 export type WeatherCondition =
   | 'sunny'
@@ -110,56 +120,57 @@ const MOCK_DAILY_WEATHER: DailyWeatherMock[] = [
 /** Pogoda per seria treningowa (1/2/3) — ustawienia do ręcznej edycji. */
 const TRAINING_SERIES_WEATHER: Record<string, TrainingSeriesWeatherOverride[]> = {
   '1': [
-    { condition: 'snowy', tempC: 1, windMs: -1, windVariability: 0.28 },
-    { condition: 'snowy', tempC: 2, windMs: -1.08, windVariability: 0.3 },
-    { condition: 'snowy', tempC: 1, windMs: -1.5, windVariability: 0.24 },
+    { condition: 'snowy', tempC: 1, windMs: -1, windVariability: 0.092 },
+    { condition: 'snowy', tempC: 2, windMs: -1.08, windVariability: 0.0984 },
+    { condition: 'snowy', tempC: 1, windMs: -1.5, windVariability: 0.0784 },
   ],
   '2': [
-    { condition: 'snowy', tempC: 2, windMs: -1.78, windVariability: 0.28 },
-    { condition: 'cloudy', tempC: 3, windMs: -1.9, windVariability: 0.34 },
-    { condition: 'cloudy', tempC: 3, windMs: -1.94, windVariability: 0.22 },
+    { condition: 'snowy', tempC: 2, windMs: -1.78, windVariability: 0.092 },
+    { condition: 'cloudy', tempC: 3, windMs: -1.9, windVariability: 0.1112 },
+    { condition: 'cloudy', tempC: 3, windMs: -1.94, windVariability: 0.072 },
   ],
   '3': [
-    { condition: 'partly_cloudy', tempC: 2, windMs: -0.2, windVariability: 0.32 },
-    { condition: 'sunny', tempC: 7, windMs: 0.5, windVariability: 0.494 },
-    { condition: 'sunny', tempC: 8, windMs: 0.3, windVariability: 0.5 },
+    { condition: 'partly_cloudy', tempC: 2, windMs: -0.2, windVariability: 0.1048 },
+    { condition: 'sunny', tempC: 7, windMs: 0.5, windVariability: 0.1624 },
+    { condition: 'sunny', tempC: 8, windMs: 0.3, windVariability: 0.164 },
   ],
   '6': [
-    { condition: 'partly_cloudy', tempC: -2, windMs: -0.7, windVariability: 0.45 },
-    { condition: 'cloudy', tempC: -1, windMs: -0.4, windVariability: 0.38 },
-    { condition: 'cloudy', tempC: -3, windMs: -0.2, windVariability: 0.11 },
+    { condition: 'partly_cloudy', tempC: -2, windMs: -0.7, windVariability: 0.148 },
+    { condition: 'cloudy', tempC: -1, windMs: -0.4, windVariability: 0.1248 },
+    { condition: 'cloudy', tempC: -3, windMs: -0.2, windVariability: 0.036 },
   ],
   '7': [
-    { condition: 'cloudy', tempC: -2, windMs: -0.5, windVariability: 0.11 },
-    { condition: 'cloudy', tempC: -3, windMs: -1.3, windVariability: 0.17 },
-    { condition: 'cloudy', tempC: -3, windMs: -2.3, windVariability: 0.4 },
+    { condition: 'cloudy', tempC: -2, windMs: -0.5, windVariability: 0.036 },
+    { condition: 'cloudy', tempC: -3, windMs: -1.3, windVariability: 0.056 },
+    { condition: 'cloudy', tempC: -3, windMs: -2.3, windVariability: 0.1312 },
   ],
   '12': [
-    { condition: 'partly_cloudy', tempC: -1, windMs: 0.2, windVariability: 0.112 },
-    { condition: 'cloudy', tempC: 0, windMs: -0.4, windVariability: 0.4 },
-    { condition: 'cloudy', tempC: -1, windMs: -0.7, windVariability: 0.3 },
+    { condition: 'partly_cloudy', tempC: -1, windMs: 0.2, windVariability: 0.0368 },
+    { condition: 'cloudy', tempC: 0, windMs: -0.4, windVariability: 0.1312 },
+    { condition: 'cloudy', tempC: -1, windMs: -0.7, windVariability: 0.0984 },
   ],
   '13': [
-    { condition: 'cloudy', tempC: -1, windMs: -0.9, windVariability: 0.5 },
-    { condition: 'cloudy', tempC: -2, windMs: -0.4, windVariability: 0.29 },
-    { condition: 'cloudy', tempC: -1, windMs: -1.1, windVariability: 0.25 },
+    { condition: 'cloudy', tempC: -1, windMs: -0.9, windVariability: 0.164 },
+    { condition: 'cloudy', tempC: -2, windMs: -0.4, windVariability: 0.0952 },
+    { condition: 'cloudy', tempC: -1, windMs: -1.1, windVariability: 0.0824 },
   ],
   '14': [
-    { condition: 'rainy', tempC: 2, windMs: 0.6, windVariability: 0.7 },
-    { condition: 'rainy', tempC: 3, windMs: 0.1, windVariability: 0.33 },
-    { condition: 'cloudy', tempC: 0, windMs: 0.4, windVariability: 0.55 },
+    { condition: 'rainy', tempC: 2, windMs: 0.6, windVariability: 0.2296 },
+    { condition: 'rainy', tempC: 3, windMs: 0.1, windVariability: 0.108 },
+    { condition: 'cloudy', tempC: 0, windMs: 0.4, windVariability: 0.1808 },
   ],
   '15': [
-    { condition: 'cloudy', tempC: -4, windMs: -2.1, windVariability: 0.3 },
-    { condition: 'snowy', tempC: -5, windMs: -2.4, windVariability: 0.35 },
-    { condition: 'snowy', tempC: -3, windMs: -2.1, windVariability: 0.6 },
+    { condition: 'cloudy', tempC: -4, windMs: -2.1, windVariability: 0.0984 },
+    { condition: 'snowy', tempC: -5, windMs: -2.4, windVariability: 0.1152 },
+    { condition: 'snowy', tempC: -3, windMs: -2.1, windVariability: 0.1968 },
   ],
   '18': [
-    { condition: 'cloudy', tempC: -7, windMs: -0.7, windVariability: 0.21 },
-    { condition: 'cloudy', tempC: -3, windMs: -0.3, windVariability: 0.27 },
-    { condition: 'cloudy', tempC: -3, windMs: 0.5, windVariability: 0.7 },
+    { condition: 'cloudy', tempC: -7, windMs: -0.7, windVariability: 0.0688 },
+    { condition: 'cloudy', tempC: -3, windMs: -0.3, windVariability: 0.0888 },
+    { condition: 'cloudy', tempC: -3, windMs: 0.5, windVariability: 0.2296 },
   ],
 };
+
 
 const WEATHER_CONDITION_LABELS: Record<WeatherCondition, string> = {
   sunny: 'słonecznie',
@@ -175,36 +186,40 @@ const WEATHER_CONDITION_LABELS: Record<WeatherCondition, string> = {
 
 const DEFAULT_WIND: Pick<NextEventWeather, 'windMs' | 'windVariability'> = {
   windMs: 1.2,
-  windVariability: 0.35,
+  windVariability: 0.144,
 };
 
 /** Szablon wiatru per typ eventu (dla treningów i fallbacku). */
 const WIND_BY_EVENT_TYPE: Record<EventType, Pick<NextEventWeather, 'windMs' | 'windVariability'>> = {
-  training: { windMs: 0.6, windVariability: 0.45 },
-  trial: { windMs: 0.9, windVariability: 0.4 },
-  individual: { windMs: 1.3, windVariability: 0.3 },
-  team_mixed: { windMs: -0.4, windVariability: 0.35 },
-  team_men_pairs: { windMs: 0.2, windVariability: 0.38 },
+  training: { windMs: 0.6, windVariability: 0.185 },
+  trial: { windMs: 0.9, windVariability: 0.164 },
+  individual: { windMs: 1.3, windVariability: 0.123 },
+  team_mixed: { windMs: -0.4, windVariability: 0.144 },
+  team_men_pairs: { windMs: 0.2, windVariability: 0.156 },
 };
 
 /**
  * Wiatry per event (tylko nie-treningi). Dla treningów wiatr bierze się wyłącznie
  * z TRAINING_SERIES_WEATHER (osobno dla serii I/II/III), żeby nie dublować konfiguracji.
  */
-const WIND_BY_EVENT_ID: Record<string, Pick<NextEventWeather, 'windMs' | 'windVariability'>> = {
-  '4': { windMs: -1.7, windVariability: 0.4 },
-  '5': { windMs: -1.87, windVariability: 0.41 },
-  '8': { windMs: -1.5, windVariability: 0.38 },
-  '9': { windMs: -1.5, windVariability: 0.35 },
-  '10': { windMs: -0.2, windVariability: 0.6198 },
-  '11': { windMs: -0.2, windVariability: 0.7 },
-  '16': { windMs: -2.1, windVariability: 0.56 },
-  '17': { windMs: -2.2, windVariability: 0.55 },
-  '19': { windMs: 0.22, windVariability: 0.4 },
-  '20': { windMs: 0.1, windVariability: 0.6 },
-  '21': { windMs: 0.5, windVariability: 0.34 },
-  '22': { windMs: 0.4, windVariability: 0.36 },
+const WIND_BY_EVENT_ID: Record<
+  string,
+  Pick<NextEventWeather, 'windMs' | 'windVariability'>
+> = {
+  '4': { windMs: -1.7, windVariability: 0.1312 },
+  '5': { windMs: -1.87, windVariability: 0.1344 },
+  '8': { windMs: -1.5, windVariability: 0.1248 },
+  '9': { windMs: -1.5, windVariability: 0.1152 },
+  '10': { windMs: -0.2, windVariability: 0.2032 },
+  '11': { windMs: -0.2, windVariability: 0.2296 },
+  '16': { windMs: -2.1, windVariability: 0.184 },
+  '17': { windMs: -2.2, windVariability: 0.1808 },
+  '19': { windMs: 0.22, windVariability: 0.1312 },
+  '20': { windMs: 0.1, windVariability: 0.1968 },
+  '21': { windMs: 0.5, windVariability: 0.112 },
+  '22': { windMs: 0.4, windVariability: 0.1184 },
 };
+
 
 export function getWeatherConditionLabel(condition: WeatherCondition): string {
   return WEATHER_CONDITION_LABELS[condition] ?? WEATHER_CONDITION_LABELS.cloudy;
@@ -215,11 +230,11 @@ export function isSnowyCondition(condition: WeatherCondition): boolean {
 }
 
 /** Zwraca następny event (symulacja: teraz = 2026-02-05 16:00, więc następny to 17:00 trening kobiet). */
-export function getNextEvent(now?: Date): ScheduleItem | null {
+export function getNextEvent(now?: Date, schedule: ScheduleItem[] = PREDAZZO_SCHEDULE): ScheduleItem | null {
   const t = now ?? new Date();
   const today = t.toISOString().slice(0, 10);
   const timeStr = `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
-  for (const item of PREDAZZO_SCHEDULE) {
+  for (const item of schedule) {
     if (item.date > today) return item;
     if (item.date === today && item.time >= timeStr) return item;
   }
@@ -253,9 +268,10 @@ export function isEventCompleted(
 /** Następny event wg postępu (pomija ukończone). */
 export function getNextEventByProgress(
   completedIds: string[],
-  trainingBlockProgress: Record<string, number>
+  trainingBlockProgress: Record<string, number>,
+  schedule: ScheduleItem[] = PREDAZZO_SCHEDULE
 ): ScheduleItem | null {
-  for (const item of PREDAZZO_SCHEDULE) {
+  for (const item of schedule) {
     if (isEventCompleted(item, completedIds, trainingBlockProgress)) continue;
     return item;
   }
@@ -289,9 +305,10 @@ function getTrainingSeriesIndex(
 /** Pogoda placeholder dla eventu (zgodna ze screenem pogody). */
 export function getNextEventWeather(
   event?: ScheduleItem | null,
-  trainingBlockProgress?: Record<string, number>
+  trainingBlockProgress?: Record<string, number>,
+  schedule: ScheduleItem[] = PREDAZZO_SCHEDULE
 ): NextEventWeather {
-  const target = event ?? getNextEvent();
+  const target = event ?? getNextEvent(undefined, schedule);
   if (!target) {
     return {
       condition: 'cloudy',

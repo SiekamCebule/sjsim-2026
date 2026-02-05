@@ -15,8 +15,10 @@ export {
   gatePoints,
   windPoints,
   stylePoints,
+  styleNotes,
   hasStylePoints,
   type StylePointsContext,
+  type StyleNotesResult,
 } from './scoring';
 export * as scoring from './scoring';
 export { HILL_PARAMS } from './hillParams';

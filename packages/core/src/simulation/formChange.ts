@@ -14,13 +14,13 @@ import type { SimulationJumper, JumperSkills } from './types';
  * Przykłady kiedy używane:
  * - sapporoGameStart (0.06): start od Sapporo – na starcie każdy dostaje losową zmianę formy
  * - afterSapporoSaturday (0.006): po sobotnim konkursie – delikatna korekta
- * - afterSapporoSunday (0.29): po niedzielnym – duża zmiana przed Igrzyskami
- * - olympicsGameStart (0.08): start od razu od Igrzysk – jedna zmiana na starcie
+ * - afterSapporoSunday (0.3335): po niedzielnym – duża zmiana przed Predazzo
+ * - olympicsGameStart (0.08): start od razu od Predazzo – jedna zmiana na starcie
  */
 export const FORM_CHANGE_ALPHA = {
   sapporoGameStart: 0.06,
   afterSapporoSaturday: 0.006,
-  afterSapporoSunday: 0.29,
+  afterSapporoSunday: 0.33,
   olympicsGameStart: 0.08,
 } as const;
 
