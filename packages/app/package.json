@@ -55,6 +55,7 @@
       "node_modules/bindings/**"
     ],
     "asar": true,
+    "npmRebuild": false,
     "linux": {
       "target": [
         "AppImage",
