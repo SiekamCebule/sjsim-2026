@@ -12,6 +12,7 @@ jobs:
     env:
       npm_execpath: pnpm
       npm_config_user_agent: pnpm
+      ELECTRON_BUILDER_SKIP_INSTALL_DEPENDENCIES: "true"
     strategy:
       fail-fast: false
       matrix:
@@ -40,7 +41,9 @@ jobs:
 
       - name: Build release (Windows)
         if: runner.os == 'Windows'
-        run: pnpm run release:win
+        run: |
+          pnpm -C packages/app exec electron-rebuild -f -w better-sqlite3
+          pnpm run release:win
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
