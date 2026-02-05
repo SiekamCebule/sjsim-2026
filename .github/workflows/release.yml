@@ -9,10 +9,13 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    env:
+      npm_execpath: pnpm
+      npm_config_user_agent: pnpm
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout
@@ -38,10 +41,6 @@ jobs:
       - name: Build release (Windows)
         if: runner.os == 'Windows'
         run: pnpm run release:win
-
-      # - name: Build release (macOS)
-      #   if: runner.os == 'macOS'
-      #   run: pnpm run release:mac
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

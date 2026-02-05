@@ -1,0 +1,98 @@
+Country,Name,Surname,FakeName,FakeSurname
+AUT,Stephan,Embacher,Stephan,Embachner
+AUT,Jan,Hoerl,Jan,Hoerndl
+AUT,Stefan,Kraft,Stefan,Krafter
+AUT,Daniel,Tschofenig,Daniel,Tschofening
+AUT,Manuel,Fettner,Manuel,Fetzner
+AUT,Jonas,Schuster,Jonas,Schustner
+AUT,Maximilian,Ortner,Maximilian,Ortnig
+AUT,Clemens,Aigner,Clemens,Aiginger
+AUT,Markus,Mueller,Markus,Moeller
+BUL,Vladimir,Zografski,Vladimir,Zografov
+CAN,Mackenzie,Boyd-Clowes,Mackenzie,Boyd-Clower
+CHN,Song,Qiwu,Song,Qiwen
+CZE,Roman,Koudelka,Roman,Koudelak
+CZE,David,Rygl,David,Ryglik
+EST,Kaimar,Vagul,Kaimar,Vagur
+EST,Artti,Aigro,Artti,Aigo
+EST,Andero,Kapp,Andero,Kappo
+FIN,Antti,Aalto,Antti,Aaltonen
+FIN,Niko,Kytosaho,Niko,Kytosalo
+FIN,Vilho,Palosaari,Vilho,Palosalo
+FIN,Eetu,Nousiainen,Eetu,Nousinen
+FIN,Jarkko,Maatta,Jarkko,Maattala
+FIN,Tomas,Kuisma,Tomas,Kuismanen
+FRA,Valentin,Foubert,Valentin,Fouberte
+FRA,Jules,Chervet,Jules,Chervin
+FRA,Enzo,Milesi,Enzo,Miletti
+GER,Felix,Hoffmann,Felix,Hoffman
+GER,Pius,Paschke,Pius,Paschka
+GER,Philipp,Raimund,Philipp,Raimundt
+GER,Andreas,Wellinger,Andreas,Welliger
+GER,Karl,Geiger,Karl,Geigler
+GER,Luca,Roth,Luca,Roeth
+GER,Ben,Bayer,Ben,Bauer
+ITA,Giovanni,Bresadola,Giovanni,Bresadoli
+ITA,Francesco,Cecon,Francesco,Cecone
+ITA,Alex,Insam,Alex,Insana
+JPN,Ryoyu,Kobayashi,Ryoyu,Kobayama
+JPN,Naoki,Nakamura,Naoki,Nakagawa
+JPN,Ren,Nikaido,Ren,Nikaidoh
+JPN,Yukiya,Sato,Yukiya,Saito
+JPN,Noriaki,Kasai,Noriaki,Kasano
+JPN,Sakutaro,Kobayashi,Sakutaro,Kobayama
+JPN,Tomofumi,Naito,Tomofumi,Naitou
+JPN,Keiichi,Sato,Keiichi,Saitoh
+JPN,Junshiro,Kobayashi,Junshiro,Kobayama
+JPN,Go,Yamamoto,Go,Yamamura
+KAZ,Ilya,Miziernykh,Ilya,Mizernykh
+KAZ,Danil,Vassilyev,Danil,Vasilev
+KAZ,Sabirzhan,Muminov,Sabirzhan,Mominov
+KAZ,Sergey,Tkachenko,Sergey,Tkachenka
+KAZ,Nurshat,Tursunzhanov,Nurshat,Tursunjanov
+KAZ,Svyatoslav,Nazarenko,Svyatoslav,Nazarenkov
+KOR,Heung,Chul Choi,Heung,Chul Choe
+NOR,Johann Andre,Forfang,Johann Andre,Forvang
+NOR,Marius,Lindvik,Marius,Lindviksen
+NOR,Kristoffer Eriksen,Sundal,Kristoffer Eriksen,Sundahl
+NOR,Isak Andreas,Langmo,Isak Andreas,Langmoen
+NOR,Robin,Pedersen,Robin,Pedersson
+NOR,Halvor Egner,Granerud,Halvor Egner,Granrud
+NOR,Benjamin,Oestvold,Benjamin,Oestvald
+NOR,Soelve Jokerund,Strand,Soelve Jokerund,Stranden
+POL,Kamil,Stoch,Kamil,Stochowski
+POL,Kacper,Tomasiak,Kacper,Tomasik
+POL,Paweł,Wąsek,Paweł,Wąsiak
+POL,Maciej,Kot,Maciej,Kotek
+POL,Dawid,Kubacki,Dawid,Kubicki
+POL,Piotr,Żyła,Piotr,Żylicz
+POL,Aleksander,Zniszczoł,Aleksander,Zniszczoń
+POL,Klemens,Joniak,Klemens,Joniuk
+POL,Andrzej,Stękała,Andrzej,Stękalski
+POL,Jakub,Wolny,Jakub,Wolniak
+ROU,Daniel Andrei,Cacina,Daniel Andrei,Cacian
+ROU,Mihnea Alexandru,Spulber,Mihnea Alexandru,Spulberu
+SLO,Domen,Prevc,Domen,Prevec
+SLO,Anze,Lanisek,Anze,Lanišek
+SLO,Timi,Zajc,Timi,Zajec
+SLO,Rok,Oblak,Rok,Oblacic
+SLO,Ziga,Jancar,Ziga,Jančar
+SLO,Zak,Mogel,Zak,Mogelj
+SUI,Gregor,Deschwanden,Gregor,Deschwender
+SUI,Sandro,Hauswirth,Sandro,Hauswirt
+SUI,Felix,Trunz,Felix,Trunzel
+SUI,Simon,Ammann,Simon,Amann
+SUI,Yannick,Wasser,Yannick,Wassmer
+SUI,Killian,Peier,Killian,Peifer
+SUI,Juri,Kesseli,Juri,Kessel
+SVK,Hektor,Kapustik,Hektor,Kapustek
+TUR,Fatih Arda,Ipcioglu,Fatih Arda,Ipcioğlu
+TUR,Muhammed Ali,Bedir,Muhammed Ali,Bediroglu
+UKR,Vitaliy,Kalinichenko,Vitaliy,Kalinchenko
+UKR,Yevhen,Marusiak,Yevhen,Marusyk
+USA,Kevin,Bickner,Kevin,Bickman
+USA,Jason,Colby,Jason,Colson
+USA,Tate,Frantz,Tate,Franz
+USA,Andrew,Urlaub,Andrew,Urland
+USA,Erik,Belshaw,Erik,Belcher
+USA,Decker,Dean,Decker,Deans
