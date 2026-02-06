@@ -1,0 +1,7 @@
+# Intentionally almost-empty.
+# When .npmignore exists, electron-builder uses it INSTEAD of .gitignore.
+# The root .gitignore contains "dist" which causes electron-builder to
+# exclude dist/main.js from the asar — hence this override.
+src/
+tsconfig.json
+*.tsbuildinfo
