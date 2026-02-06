@@ -99,7 +99,7 @@ export const saveGame = (payload: SaveGamePayload): void => {
       'INSERT INTO archive_jumps (id, entry_id, sort_index, payload_json) VALUES (?, ?, ?, ?)'
     );
 
-    payload.archiveEntries?.forEach((entry, idx) => {
+    payload.archiveEntries?.forEach((entry) => {
       const { results, ...entryMeta } = entry as Record<string, unknown>;
       insertEntry.run(
         String(entry.id),

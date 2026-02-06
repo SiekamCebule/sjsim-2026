@@ -52,7 +52,7 @@ export const MainMenu = ({
       <header className="main-menu__header">
         <div className="main-menu__title-block">
           <h1 className="main-menu__title">Sj.Sim</h1>
-          <p className="main-menu__subtitle">Predazzo 2026</p>
+          <p className="main-menu__subtitle">Predazzo Edition</p>
         </div>
         <button
           type="button"

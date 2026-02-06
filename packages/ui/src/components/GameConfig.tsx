@@ -1,13 +1,13 @@
 import type { JSX } from 'react';
 import { useMemo, useState } from 'react';
 import {
-  countryToFlag,
   getJumpersByCountry,
   getLimitForCountry,
   getMenCountries,
   getRealRosterForCountry,
   type Jumper
 } from '../data/jumpersData';
+import { CountryFlag } from './CountryFlag';
 import './game-config.css';
 
 export type GameMode = 'director' | 'coach';
@@ -432,7 +432,7 @@ const CallupsCountryStep = ({
               }
             >
               <span className="game-config__country-flag" aria-hidden>
-                {countryToFlag(code)}
+                <CountryFlag country={code} />
               </span>
               <span className="game-config__country-code">{code}</span>
             </button>

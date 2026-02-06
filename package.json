@@ -12,7 +12,7 @@
     "dev": "npm run dev --workspace @sjsim/app",
     "apply-fake-names": "tsx scripts/apply-fake-names.ts",
     "apply-fake-names:release": "tsx scripts/apply-fake-names.ts --release",
-    "release:prepare": "pnpm -C packages/ui run build && pnpm exec -- tsc -p packages/app/tsconfig.json && pnpm run copy-ui-dist && pnpm run apply-fake-names:release -- --dist packages/app/ui/dist",
+    "release:prepare": "pnpm -C packages/ui run build && pnpm exec -- tsc -p packages/app/tsconfig.json && pnpm run copy-ui-dist && pnpm run apply-fake-names:release -- --dist packages/app/ui/dist && pnpm -C packages/app run rebuild:native",
     "release:win": "pnpm run release:prepare && pnpm --filter @sjsim/app run package:win",
     "release:linux": "pnpm run release:prepare && pnpm --filter @sjsim/app run package:linux",
     "release:mac": "pnpm run release:prepare && pnpm --filter @sjsim/app run package:mac",

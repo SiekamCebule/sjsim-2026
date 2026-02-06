@@ -26,9 +26,9 @@ import type { ScheduleItem, NextEventWeather } from '../data/predazzoSchedule';
 import type { EventResultsSummary } from '../data/eventResults';
 import {
   countryCodeToName,
-  countryToFlag,
   type Jumper,
 } from '../data/jumpersData';
+import { CountryFlag } from './CountryFlag';
 import type { GameDataSnapshot } from '../data/gameDataSnapshot';
 import {
   resolveMenTeams,
@@ -1955,7 +1955,7 @@ export const CompetitionScreen = ({
             {queue.map((item, idx) => {
               const hasJumped = idx < queueIndex;
               const isCurrent = item.id === currentItem?.id;
-              const flag = countryToFlag(item.jumper.country);
+              const flag = <CountryFlag country={item.jumper.country} />;
               return (
                 <li
                   key={item.id}
@@ -2017,7 +2017,7 @@ export const CompetitionScreen = ({
                 <div className="competition-screen__details-content">
                   <div className="competition-screen__details-header">
                     <span className="competition-screen__details-name">
-                      {countryToFlag(rowDetails.jumper.country)} {rowDetails.jumper.name} {rowDetails.jumper.surname}
+                      <CountryFlag country={rowDetails.jumper.country} /> {rowDetails.jumper.name} {rowDetails.jumper.surname}
                     </span>
                     <span className="competition-screen__details-bib">{rowDetails.bib}</span>
                   </div>
@@ -2088,7 +2088,7 @@ export const CompetitionScreen = ({
             </p>
             {currentItem ? (
               <div className="competition-screen__next-row">
-                <span className="competition-screen__next-flag">{countryToFlag(currentItem.jumper.country)}</span>
+                <span className="competition-screen__next-flag"><CountryFlag country={currentItem.jumper.country} /></span>
                 <span className="competition-screen__next-name">
                   {nextJumperPositionAfterRound1 != null && (
                     <span className="competition-screen__next-place">({nextJumperPositionAfterRound1}. po 1. serii)</span>
@@ -2128,7 +2128,7 @@ export const CompetitionScreen = ({
               <p className="competition-screen__next-title">Ostatni skok</p>
               <div className="competition-screen__last-row competition-screen__details-header">
                 <span className="competition-screen__details-name">
-                  <span className="competition-screen__next-flag">{countryToFlag(lastJumpInfo.jump.jumper.country)}</span>
+                  <span className="competition-screen__next-flag"><CountryFlag country={lastJumpInfo.jump.jumper.country} /></span>
                   {lastJumpInfo.label}
                 </span>
                 <span className="competition-screen__details-bib">{lastJumpInfo.jump.bib}</span>
@@ -2296,7 +2296,7 @@ function IndividualResultsTable({
             >
               <td>{idx + 1}</td>
               <td className="competition-screen__cell-name">
-                <span className="competition-screen__flag">{countryToFlag(row.jumper.country)}</span>
+                <span className="competition-screen__flag"><CountryFlag country={row.jumper.country} /></span>
                 {row.jumper.name} {row.jumper.surname}
               </td>
               <td
@@ -2380,7 +2380,7 @@ function TeamResultsTable({
         <div key={row.team.id} className="competition-screen__team-row">
           <div className="competition-screen__team-main">
             <span className="competition-screen__team-pos">{idx + 1}.</span>
-            <span className="competition-screen__team-flag">{countryToFlag(row.team.country)}</span>
+            <span className="competition-screen__team-flag"><CountryFlag country={row.team.country} /></span>
             <span className="competition-screen__team-name">{teamLabel(row.team)}</span>
             <span className="competition-screen__team-total">{row.total.toFixed(1)} pkt</span>
           </div>
@@ -2427,7 +2427,7 @@ function TeamResultsTable({
                   disabled={!activeId}
                 >
                   <span className="competition-screen__team-subname">
-                    <span className="competition-screen__flag">{countryToFlag(m.country)}</span>
+                    <span className="competition-screen__flag"><CountryFlag country={m.country} /></span>
                     {m.name} {m.surname}
                   </span>
                   {byRound.map((r, roundIdx) => (

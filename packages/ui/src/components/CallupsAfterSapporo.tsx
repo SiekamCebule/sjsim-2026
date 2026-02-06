@@ -12,12 +12,12 @@ import {
   getRealRosterForCountry,
   getJumpersByCountry,
   getWorldCupOrderAll,
-  countryToFlag,
   countryCodeToName,
   type Jumper,
 } from '../data/jumpersData';
 import { buildSapporoRoster } from '../data/sapporoData';
 import { computeAllBotCallups, getCountriesForCallups } from '../data/botCallups';
+import { CountryFlag } from './CountryFlag';
 import type { GameConfigState } from './GameConfig';
 import { SapporoResultsPreview } from './SapporoResults';
 import './game-config.css';
@@ -221,7 +221,7 @@ export const CallupsAfterSapporo = ({
                     <div key={c} className="callups-team">
                       <div className="callups-team__header">
                         <span className="game-config__country-flag" aria-hidden>
-                          {countryToFlag(c)}
+                          <CountryFlag country={c} />
                         </span>{' '}
                         <span className="callups-team__country">{countryCodeToName(c)}</span>
                       </div>
@@ -242,7 +242,7 @@ export const CallupsAfterSapporo = ({
               <div className="game-config__step">
                 <h2 className="game-config__step-title">
                   <span className="game-config__country-flag" aria-hidden>
-                    {countryToFlag(country)}
+                    <CountryFlag country={country} />
                   </span>{' '}
                   <span className="callups-team__country">{countryCodeToName(country)}</span>
                 </h2>
@@ -284,7 +284,7 @@ export const CallupsAfterSapporo = ({
                         <div key={c} className="callups-team">
                           <div className="callups-team__header">
                             <span className="game-config__country-flag" aria-hidden>
-                              {countryToFlag(c)}
+                              <CountryFlag country={c} />
                             </span>{' '}
                             <span className="callups-team__country">{countryCodeToName(c)}</span>
                           </div>

@@ -14,10 +14,11 @@
     "dev:electron": "wait-on http://localhost:5173 dist/main.js && env -u ELECTRON_RUN_AS_NODE VITE_DEV_SERVER_URL=http://localhost:5173 electron .",
     "build": "tsc -p tsconfig.json",
     "postinstall": "electron-builder install-app-deps",
-    "package": "electron-builder",
-    "package:win": "electron-builder --win",
-    "package:linux": "electron-builder --linux",
-    "package:mac": "electron-builder --mac",
+    "rebuild:native": "npx --yes @electron/rebuild -f -w better-sqlite3",
+    "package": "pnpm run rebuild:native && electron-builder",
+    "package:win": "pnpm run rebuild:native && electron-builder --win",
+    "package:linux": "pnpm run rebuild:native && electron-builder --linux",
+    "package:mac": "pnpm run rebuild:native && electron-builder --mac",
     "clean": "tsc -p tsconfig.json --build --clean",
     "lint": "eslint \"src/**/*.ts\"",
     "typecheck": "tsc -p tsconfig.json --noEmit"
@@ -68,7 +69,7 @@
       "node_modules/bindings/**"
     ],
     "asar": true,
-    "npmRebuild": false,
+    "npmRebuild": true,
     "linux": {
       "target": [
         "AppImage",

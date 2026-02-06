@@ -4,7 +4,8 @@ import type { ScheduleItem, NextEventWeather } from '../data/predazzoSchedule';
 import { getWeatherConditionLabel } from '../data/predazzoSchedule';
 import { WEATHER_ICONS } from '../data/weatherIcons';
 import { buildDuetRound1StartList, buildIndividualStartList, buildMixedRound1StartList, createDefaultRandom, JuryBravery, type SimulationJumper } from '@sjsim/core';
-import { countryToFlag, type Jumper } from '../data/jumpersData';
+import { type Jumper } from '../data/jumpersData';
+import { CountryFlag } from './CountryFlag';
 import type { GameDataSnapshot } from '../data/gameDataSnapshot';
 import {
   resolveMenTeams,
@@ -344,7 +345,7 @@ export const CompetitionPreviewDialog = ({
                           checked={isParticipating}
                           onChange={() => toggleParticipating(j)}
                         />
-                        <span className="competition-preview-dialog__flag">{countryToFlag(j.country)}</span>
+                        <span className="competition-preview-dialog__flag"><CountryFlag country={j.country} /></span>
                         <span>{j.name} {j.surname}</span>
                       </label>
                     </li>
@@ -395,7 +396,7 @@ export const CompetitionPreviewDialog = ({
               <div className="competition-preview-dialog__skip-items">
                 {resignedList.map((j) => (
                   <span key={jumperKey(j)} className="competition-preview-dialog__skip-item">
-                    {countryToFlag(j.country)} {j.name} {j.surname}
+                    <CountryFlag country={j.country} /> {j.name} {j.surname}
                   </span>
                 ))}
               </div>
@@ -419,14 +420,14 @@ export const CompetitionPreviewDialog = ({
                           checked={isParticipating}
                           onChange={() => toggleParticipating(j)}
                         />
-                        <span className="competition-preview-dialog__flag">{countryToFlag(j.country)}</span>
+                        <span className="competition-preview-dialog__flag"><CountryFlag country={j.country} /></span>
                         <span>
                           {j.name} {j.surname}
                         </span>
                       </label>
                     ) : (
                       <>
-                        <span className="competition-preview-dialog__flag">{countryToFlag(j.country)}</span>
+                        <span className="competition-preview-dialog__flag"><CountryFlag country={j.country} /></span>
                         <span>
                           {j.name} {j.surname}
                         </span>

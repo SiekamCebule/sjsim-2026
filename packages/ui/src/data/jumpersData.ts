@@ -216,8 +216,8 @@ export function getMenCountries(): string[] {
   return [...new Set(countries)].sort();
 }
 
-/** Map ISO 3166-1 alpha-3 do alpha-2 (dla flag emoji). */
-const COUNTRY_TO_ALPHA2: Record<string, string> = {
+/** Map ISO 3166-1 alpha-3 (FIS codes) do alpha-2 (ISO standard / flag-icons). */
+export const COUNTRY_TO_ALPHA2: Record<string, string> = {
   AUT: 'AT',
   BUL: 'BG',
   CHN: 'CN',
@@ -275,7 +275,15 @@ export function countryCodeToName(code3: string): string {
   return COUNTRY_CODE_TO_NAME[code3] ?? code3;
 }
 
-/** Zwraca emoji flagi dla kodu kraju (np. AUT → 🇦🇹). */
+/** Zwraca kod alpha-2 (małe litery) dla kodu FIS alpha-3. Używany przez flag-icons CSS. */
+export function countryToAlpha2(code3: string): string {
+  return (COUNTRY_TO_ALPHA2[code3] ?? code3.slice(0, 2)).toLowerCase();
+}
+
+/**
+ * @deprecated Użyj komponentu <CountryFlag /> zamiast emoji flag.
+ * Na Windowsie emoji flag nie działają.
+ */
 export function countryToFlag(code3: string): string {
   const a2 = COUNTRY_TO_ALPHA2[code3] ?? code3.slice(0, 2);
   return [...a2].map((c) => String.fromCodePoint(0x1f1e6 + c.toUpperCase().charCodeAt(0) - 65)).join('');

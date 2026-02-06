@@ -1,7 +1,8 @@
 import type { JSX } from 'react';
 import { useMemo, useState } from 'react';
 import type { ScheduleItem } from '../data/predazzoSchedule';
-import { countryToFlag, type Jumper } from '../data/jumpersData';
+import { type Jumper } from '../data/jumpersData';
+import { CountryFlag } from './CountryFlag';
 import type { GameDataSnapshot } from '../data/gameDataSnapshot';
 import { resolveMenTeams, resolveWomenTeams } from '../data/gameDataSnapshot';
 import type { GameConfigState } from './GameConfig';
@@ -118,7 +119,7 @@ export const TeamSelectionDialog = ({
           </h2>
           {hasCountry && (
             <span className="team-selection-dialog__country">
-              <span className="team-selection-dialog__flag" aria-hidden>{countryToFlag(country)}</span>
+              <span className="team-selection-dialog__flag" aria-hidden><CountryFlag country={country} /></span>
               {country}
             </span>
           )}

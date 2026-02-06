@@ -12,7 +12,8 @@ import {
   type NextEventWeather,
 } from '../data/predazzoSchedule';
 import { WEATHER_ICONS } from '../data/weatherIcons';
-import { countryToFlag, countryCodeToName, type Jumper } from '../data/jumpersData';
+import { countryCodeToName, type Jumper } from '../data/jumpersData';
+import { CountryFlag } from './CountryFlag';
 import type { GameDataSnapshot } from '../data/gameDataSnapshot';
 import {
   resolveMenTeams,
@@ -1311,7 +1312,7 @@ export const PredazzoDashboard = ({
                         <li key={`${section.event.id}-${entry.rank}`} className="predazzo-dash__final-item">
                           <span className="predazzo-dash__final-rank">{entry.rank}.</span>
                           <span className="predazzo-dash__final-flag" aria-hidden>
-                            {countryToFlag(entry.country)}
+                            <CountryFlag country={entry.country} />
                           </span>
                           <span className="predazzo-dash__final-name">{entry.label}</span>
                         </li>
@@ -1376,11 +1377,11 @@ export const PredazzoDashboard = ({
         </button>
         <div className="predazzo-dash__title-block">
           <h1 className="predazzo-dash__title">Sj.Sim</h1>
-          <p className="predazzo-dash__subtitle">Predazzo 2026</p>
+          <p className="predazzo-dash__subtitle">Predazzo Edition</p>
         </div>
         {coachCountry && (
           <span className="predazzo-dash__role-label" title={`Trener ${countryCodeToName(coachCountry)}`}>
-            <span className="predazzo-dash__role-flag" aria-hidden>{countryToFlag(coachCountry)}</span>
+            <span className="predazzo-dash__role-flag" aria-hidden><CountryFlag country={coachCountry} /></span>
             <span className="predazzo-dash__role-text">{countryCodeToName(coachCountry)}</span>
           </span>
         )}
@@ -1417,7 +1418,7 @@ export const PredazzoDashboard = ({
                   <div className="predazzo-dash__corner predazzo-dash__corner--faworyt">
                     <span className="predazzo-dash__corner-label">{corners.faworyt.label}</span>
                     <span className="predazzo-dash__corner-jumper">
-                      {countryToFlag(cornerCountry(corners.faworyt))}{' '}
+                      <CountryFlag country={cornerCountry(corners.faworyt)} />{' '}
                       {cornerLabel(corners.faworyt)}
                     </span>
                   </div>
@@ -1426,7 +1427,7 @@ export const PredazzoDashboard = ({
                   <div className="predazzo-dash__corner predazzo-dash__corner--dark">
                     <span className="predazzo-dash__corner-label">{corners.czarnyKon.label}</span>
                     <span className="predazzo-dash__corner-jumper">
-                      {countryToFlag(cornerCountry(corners.czarnyKon))}{' '}
+                      <CountryFlag country={cornerCountry(corners.czarnyKon)} />{' '}
                       {cornerLabel(corners.czarnyKon)}
                     </span>
                   </div>
@@ -1435,7 +1436,7 @@ export const PredazzoDashboard = ({
                   <div className="predazzo-dash__corner predazzo-dash__corner--disappointment">
                     <span className="predazzo-dash__corner-label">{corners.rozczarowanie.label}</span>
                     <span className="predazzo-dash__corner-jumper">
-                      {countryToFlag(cornerCountry(corners.rozczarowanie))}{' '}
+                      <CountryFlag country={cornerCountry(corners.rozczarowanie)} />{' '}
                       {cornerLabel(corners.rozczarowanie)}
                     </span>
                   </div>
@@ -1552,7 +1553,7 @@ export const PredazzoDashboard = ({
                                 <td>{row.rank}</td>
                                 <td className="predazzo-dash__results-name-cell">
                                   <span className="predazzo-dash__results-flag" aria-hidden>
-                                    {countryToFlag(row.country)}
+                                    <CountryFlag country={row.country} />
                                   </span>
                                   <span className="predazzo-dash__results-name">{row.label}</span>
                                 </td>
@@ -1608,7 +1609,7 @@ export const PredazzoDashboard = ({
                                   <td>{row.rank}</td>
                                   <td className="predazzo-dash__results-name-cell">
                                     <span className="predazzo-dash__results-flag" aria-hidden>
-                                      {countryToFlag(row.country)}
+                                      <CountryFlag country={row.country} />
                                     </span>
                                     <span className="predazzo-dash__results-name">{row.label}</span>
                                   </td>
@@ -1674,7 +1675,7 @@ export const PredazzoDashboard = ({
                                       {medal.rank === 1 ? '🥇' : medal.rank === 2 ? '🥈' : '🥉'}
                                     </span>
                                     <span className="predazzo-dash__archive-medal-flag" aria-hidden>
-                                      {countryToFlag(medal.country)}
+                                      <CountryFlag country={medal.country} />
                                     </span>
                                     <span className="predazzo-dash__archive-medal-name">{medal.label}</span>
                                   </span>
@@ -1877,7 +1878,7 @@ function ArchiveResultsPanel({ entry }: { entry: PredazzoArchiveEntry }): JSX.El
                 <div key={row.team.id} className="competition-screen__team-row">
                   <div className="competition-screen__team-main">
                     <span className="competition-screen__team-pos">{idx + 1}.</span>
-                    <span className="competition-screen__team-flag">{countryToFlag(row.team.country)}</span>
+                    <span className="competition-screen__team-flag"><CountryFlag country={row.team.country} /></span>
                     <span className="competition-screen__team-name">{countryCodeToName(row.team.country)}</span>
                     <span className="competition-screen__team-total">{row.total.toFixed(1)} pkt</span>
                   </div>
@@ -1915,7 +1916,7 @@ function ArchiveResultsPanel({ entry }: { entry: PredazzoArchiveEntry }): JSX.El
                           style={{ gridTemplateColumns: gridTemplate }}
                         >
                           <span className="competition-screen__team-subname">
-                            <span className="competition-screen__flag">{countryToFlag(m.country)}</span>
+                            <span className="competition-screen__flag"><CountryFlag country={m.country} /></span>
                             {m.name} {m.surname}
                           </span>
                           {byRound.map((r, roundIdx) => (
@@ -1971,7 +1972,7 @@ function ArchiveResultsPanel({ entry }: { entry: PredazzoArchiveEntry }): JSX.El
                   >
                     <td>{idx + 1}</td>
                     <td className="competition-screen__cell-name">
-                      <span className="competition-screen__flag">{countryToFlag(row.jumper.country)}</span>
+                      <span className="competition-screen__flag"><CountryFlag country={row.jumper.country} /></span>
                       {row.jumper.name} {row.jumper.surname}
                     </td>
                     <td
@@ -2026,7 +2027,7 @@ function ArchiveResultsPanel({ entry }: { entry: PredazzoArchiveEntry }): JSX.El
             <div className="competition-screen__details-content">
               <div className="competition-screen__details-header">
                 <span className="competition-screen__details-name">
-                  {countryToFlag(rowDetails.jumper.country)} {rowDetails.jumper.name} {rowDetails.jumper.surname}
+                  <CountryFlag country={rowDetails.jumper.country} /> {rowDetails.jumper.name} {rowDetails.jumper.surname}
                 </span>
                 <span className="competition-screen__details-bib">{rowDetails.bib}</span>
               </div>
@@ -2111,7 +2112,7 @@ function SapporoArchivePanel({ entry }: { entry: Extract<ArchiveEntry, { source:
                   <td className="sapporo-results__cell-pos">{row.position}</td>
                   <td className="sapporo-results__cell-zawodnik">
                     <span className="sapporo-results__flag" aria-hidden>
-                      {countryToFlag(row.jumperId.split('-')[0] ?? '')}
+                      <CountryFlag country={row.jumperId.split('-')[0] ?? ''} />
                     </span>
                     <span className="sapporo-results__jumper-name">{row.jumperId.split('-').slice(1).join(' ')}</span>
                   </td>
@@ -2140,7 +2141,7 @@ function SapporoArchivePanel({ entry }: { entry: Extract<ArchiveEntry, { source:
                   <td className="sapporo-results__cell-bib">{row.bib}</td>
                   <td className="sapporo-results__cell-zawodnik">
                     <span className="sapporo-results__flag" aria-hidden>
-                      {countryToFlag(row.jumperId.split('-')[0] ?? '')}
+                      <CountryFlag country={row.jumperId.split('-')[0] ?? ''} />
                     </span>
                     <span className="sapporo-results__jumper-name">{row.jumperId.split('-').slice(1).join(' ')}</span>
                   </td>

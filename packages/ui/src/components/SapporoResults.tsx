@@ -13,7 +13,7 @@ import type {
   SapporoWeekendResult,
 } from '@sjsim/core';
 import { buildSapporoRoster } from '../data/sapporoData';
-import { countryToFlag } from '../data/jumpersData';
+import { CountryFlag } from './CountryFlag';
 import type { GameConfigState } from './GameConfig';
 import './sapporo-results.css';
 
@@ -203,7 +203,7 @@ function SapporoJumpDetails({
         <div className="competition-screen__details-content">
           <div className="competition-screen__details-header">
             <span className="competition-screen__details-name">
-              {countryToFlag(countryFromJumperId(details.row.jumperId))} {jumperDisplayName(details.row.jumperId)}
+              <CountryFlag country={countryFromJumperId(details.row.jumperId)} /> {jumperDisplayName(details.row.jumperId)}
             </span>
             <span className="competition-screen__details-bib">{details.row.bib}</span>
           </div>
@@ -595,7 +595,7 @@ function SingleSeriesTable({ step, highlightRow, onRowClick }: SingleSeriesTable
             <td className="sapporo-results__cell-pos">{row.position}</td>
             <td className="sapporo-results__cell-zawodnik">
               <span className="sapporo-results__flag" aria-hidden>
-                {countryToFlag(countryFromJumperId(row.jumperId))}
+                <CountryFlag country={countryFromJumperId(row.jumperId)} />
               </span>
               <span className="sapporo-results__jumper-name">{jumperDisplayName(row.jumperId)}</span>
             </td>
@@ -647,7 +647,7 @@ function TwoSeriesTable({ step, highlightRow, onRowClick }: TwoSeriesTableProps)
             <td className="sapporo-results__cell-bib">{row.bib}</td>
             <td className="sapporo-results__cell-zawodnik">
               <span className="sapporo-results__flag" aria-hidden>
-                {countryToFlag(countryFromJumperId(row.jumperId))}
+                <CountryFlag country={countryFromJumperId(row.jumperId)} />
               </span>
               <span className="sapporo-results__jumper-name">{jumperDisplayName(row.jumperId)}</span>
             </td>
