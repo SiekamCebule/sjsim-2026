@@ -182,6 +182,15 @@ function toJumpDetail(result: SeriesJumpEntry['result'] | undefined): {
   };
 }
 
+function getQualifiedJumpers(result: QualificationResult): SimulationJumper[] {
+  const series = result.series[0];
+  if (!series) return [];
+  const byBib = new Map(series.jumps.map((entry) => [entry.bib, entry.jumper]));
+  return result.qualifiedBibs
+    .map((bib) => byBib.get(bib))
+    .filter((jumper): jumper is SimulationJumper => jumper != null);
+}
+
 function selectGate(
   roster: SimulationJumper[],
   simulator: Parameters<typeof selectStartingGate>[0]['simulator'],
@@ -397,16 +406,11 @@ export function runSapporoWeekend(params: RunSapporoWeekendParams): SapporoWeeke
     rows: quali1Ordered.map((j, i) => toSingleRow(j, i)),
   });
 
-  const qualifiedBibs1 = quali1Result.qualifiedBibs;
-  const qualifiedIds1 = qualifiedBibs1
-    .map((bib) => rosterState[bib - 1]?.id)
-    .filter((id): id is string => id != null);
-  const orderSaturday = [...qualifiedIds1].sort(
-    (a, b) => worldCupOrderIds.indexOf(a) - worldCupOrderIds.indexOf(b)
-  );
-  const rosterSaturday = qualifiedBibs1
-    .map((bib) => rosterState[bib - 1])
-    .filter((j): j is SimulationJumper => j != null);
+  const qualifiedJumpers1 = getQualifiedJumpers(quali1Result);
+  const qualifiedIds1 = qualifiedJumpers1.map((jumper) => jumper.id);
+  const qualifiedIdSet1 = new Set(qualifiedIds1);
+  const orderSaturday = worldCupOrderIds.filter((id) => qualifiedIdSet1.has(id));
+  const rosterSaturday = qualifiedJumpers1;
 
   // --- Sobota: seria próbna ---
   const baseWindSaturday = makeBaseWind(1.5, 0.28, 0.23, 0.03);
@@ -573,16 +577,11 @@ export function runSapporoWeekend(params: RunSapporoWeekendParams): SapporoWeeke
     rows: quali2Ordered.map((j, i) => toSingleRow(j, i)),
   });
 
-  const qualifiedBibs2 = quali2Result.qualifiedBibs;
-  const qualifiedIds2 = qualifiedBibs2
-    .map((bib) => rosterState[bib - 1]?.id)
-    .filter((id): id is string => id != null);
-  const orderSunday = [...qualifiedIds2].sort(
-    (a, b) => worldCupOrderIds.indexOf(a) - worldCupOrderIds.indexOf(b)
-  );
-  const rosterSunday = qualifiedBibs2
-    .map((bib) => rosterState[bib - 1])
-    .filter((j): j is SimulationJumper => j != null);
+  const qualifiedJumpers2 = getQualifiedJumpers(quali2Result);
+  const qualifiedIds2 = qualifiedJumpers2.map((jumper) => jumper.id);
+  const qualifiedIdSet2 = new Set(qualifiedIds2);
+  const orderSunday = worldCupOrderIds.filter((id) => qualifiedIdSet2.has(id));
+  const rosterSunday = qualifiedJumpers2;
 
   // --- Niedziela: konkurs (seria 1, potem wyniki końcowe) ---
   const baseWindSunday = makeBaseWind(1.98, 0.3, 0.23, 0.028);
