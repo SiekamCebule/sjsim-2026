@@ -306,163 +306,165 @@ export const CompetitionPreviewDialog = ({
       onClick={(e) => e.target === e.currentTarget && onCancel()}
     >
       <div className="competition-preview-dialog">
-        <div className="competition-preview-dialog__left">
-          <div className="competition-preview-dialog__forecast">
-            <h3 className="competition-preview-dialog__forecast-title">Prognoza</h3>
-            <p className="competition-preview-dialog__forecast-line">
-              Jest <span className="competition-preview-dialog__forecast-condition">{getWeatherConditionLabel(weather.condition)}</span>
-              <span className="competition-preview-dialog__forecast-icon-inline" aria-hidden>
-                <WeatherIcon condition={weather.condition} />
-              </span>
-              Temperatura wynosi {weather.tempC} °C.
-            </p>
-            <p className="competition-preview-dialog__forecast-line competition-preview-dialog__forecast-line--wind">
-              <WindIcon />
-              {windSpeedLabel(weather.windMs)}.
-            </p>
-            <p className="competition-preview-dialog__forecast-line">
-              {variabilitySentence(weather.windVariability)}
-            </p>
+        <div className="competition-preview-dialog__body">
+          <div className="competition-preview-dialog__left">
+            <div className="competition-preview-dialog__forecast">
+              <h3 className="competition-preview-dialog__forecast-title">Prognoza</h3>
+              <p className="competition-preview-dialog__forecast-line">
+                Jest <span className="competition-preview-dialog__forecast-condition">{getWeatherConditionLabel(weather.condition)}</span>
+                <span className="competition-preview-dialog__forecast-icon-inline" aria-hidden>
+                  <WeatherIcon condition={weather.condition} />
+                </span>
+                Temperatura wynosi {weather.tempC} °C.
+              </p>
+              <p className="competition-preview-dialog__forecast-line competition-preview-dialog__forecast-line--wind">
+                <WindIcon />
+                {windSpeedLabel(weather.windMs)}.
+              </p>
+              <p className="competition-preview-dialog__forecast-line">
+                {variabilitySentence(weather.windVariability)}
+              </p>
+            </div>
+
+            {showCoachRosterLeft && (
+              <div className="competition-preview-dialog__coach-roster-card">
+                <h3 className="competition-preview-dialog__coach-roster-title">
+                  {event.gender === 'women' ? 'Twoje zawodniczki' : 'Twoi zawodnicy'}
+                </h3>
+                <p className="competition-preview-dialog__coach-roster-hint">
+                  Trening nieobowiązkowy — odznacz {event.gender === 'women' ? 'niestartujące' : 'niestartujących'}.
+                </p>
+                <ul className="competition-preview-dialog__coach-roster-list" role="list">
+                  {coachRoster.map((j) => {
+                    const key = jumperKey(j);
+                    const isParticipating = participatingKeys.has(key);
+                    return (
+                      <li key={key}>
+                        <label className="competition-preview-dialog__coach-roster-row">
+                          <input
+                            type="checkbox"
+                            checked={isParticipating}
+                            onChange={() => toggleParticipating(j)}
+                          />
+                          <span className="competition-preview-dialog__flag"><CountryFlag country={j.country} /></span>
+                          <span>{j.name} {j.surname}</span>
+                        </label>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {isDirector && (
+              <div className="competition-preview-dialog__manual-bar-card">
+                <label className="competition-preview-dialog__manual-bar">
+                  <input
+                    type="checkbox"
+                    checked={manualBar}
+                    onChange={(e) => setManualBar(e.target.checked)}
+                  />
+                  <span>Ustawiaj rozbieg samemu</span>
+                </label>
+                <label className={`competition-preview-dialog__jury-select ${manualBar ? 'competition-preview-dialog__jury-select--disabled' : ''}`}>
+                  <span>Odwaga jury</span>
+                  <select
+                    value={juryBravery}
+                    onChange={(e) => setJuryBravery(e.target.value as JuryBravery)}
+                    disabled={manualBar}
+                  >
+                    {JURY_BRAVERY_OPTIONS.map((value) => (
+                      <option key={value} value={value}>
+                        {JURY_BRAVERY_LABELS[value]}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
           </div>
 
-          {showCoachRosterLeft && (
-            <div className="competition-preview-dialog__coach-roster-card">
-              <h3 className="competition-preview-dialog__coach-roster-title">
-                {event.gender === 'women' ? 'Twoje zawodniczki' : 'Twoi zawodnicy'}
-              </h3>
-              <p className="competition-preview-dialog__coach-roster-hint">
-                Trening nieobowiązkowy — odznacz {event.gender === 'women' ? 'niestartujące' : 'niestartujących'}.
-              </p>
-              <ul className="competition-preview-dialog__coach-roster-list" role="list">
-                {coachRoster.map((j) => {
+          <div className="competition-preview-dialog__right">
+            <h2 id="competition-preview-title" className="competition-preview-dialog__title">
+              {formatEventShortLabel(event)} — {event.hill}
+            </h2>
+            <p className="competition-preview-dialog__subtitle">
+              Lista startowa · {participating.length} {athleteLabel}
+            </p>
+            {showSkippedList && (
+              <div className="competition-preview-dialog__skip-list">
+                <span className="competition-preview-dialog__skip-label">Zrezygnowali:</span>
+                <div className="competition-preview-dialog__skip-items">
+                  {resignedList.map((j) => (
+                    <span key={jumperKey(j)} className="competition-preview-dialog__skip-item">
+                      <CountryFlag country={j.country} /> {j.name} {j.surname}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="competition-preview-dialog__list-wrap">
+              <ul className="competition-preview-dialog__list" role="list">
+                {startListDisplay.map((j, idx) => {
                   const key = jumperKey(j);
                   const isParticipating = participatingKeys.has(key);
+                  const isCoachJumper = j.country === coachCountry;
+                  const canToggle = canToggleParticipation && isCoachJumper;
                   return (
-                    <li key={key}>
-                      <label className="competition-preview-dialog__coach-roster-row">
-                        <input
-                          type="checkbox"
-                          checked={isParticipating}
-                          onChange={() => toggleParticipating(j)}
-                        />
-                        <span className="competition-preview-dialog__flag"><CountryFlag country={j.country} /></span>
-                        <span>{j.name} {j.surname}</span>
-                      </label>
+                    <li key={key} className="competition-preview-dialog__row">
+                      <span className="competition-preview-dialog__pos">{idx + 1}.</span>
+                      {canToggle ? (
+                        <label className="competition-preview-dialog__checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={isParticipating}
+                            onChange={() => toggleParticipating(j)}
+                          />
+                          <span className="competition-preview-dialog__flag"><CountryFlag country={j.country} /></span>
+                          <span>
+                            {j.name} {j.surname}
+                          </span>
+                        </label>
+                      ) : (
+                        <>
+                          <span className="competition-preview-dialog__flag"><CountryFlag country={j.country} /></span>
+                          <span>
+                            {j.name} {j.surname}
+                          </span>
+                        </>
+                      )}
                     </li>
                   );
                 })}
               </ul>
             </div>
-          )}
-
-          {isDirector && (
-            <div className="competition-preview-dialog__manual-bar-card">
-              <label className="competition-preview-dialog__manual-bar">
-                <input
-                  type="checkbox"
-                  checked={manualBar}
-                  onChange={(e) => setManualBar(e.target.checked)}
-                />
-                <span>Ustawiaj rozbieg samemu</span>
-              </label>
-              <label className={`competition-preview-dialog__jury-select ${manualBar ? 'competition-preview-dialog__jury-select--disabled' : ''}`}>
-                <span>Odwaga jury</span>
-                <select
-                  value={juryBravery}
-                  onChange={(e) => setJuryBravery(e.target.value as JuryBravery)}
-                  disabled={manualBar}
-                >
-                  {JURY_BRAVERY_OPTIONS.map((value) => (
-                    <option key={value} value={value}>
-                      {JURY_BRAVERY_LABELS[value]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-          )}
+          </div>
         </div>
 
-        <div className="competition-preview-dialog__right">
-          <h2 id="competition-preview-title" className="competition-preview-dialog__title">
-            {formatEventShortLabel(event)} — {event.hill}
-          </h2>
-          <p className="competition-preview-dialog__subtitle">
-            Lista startowa · {participating.length} {athleteLabel}
-          </p>
-          {showSkippedList && (
-            <div className="competition-preview-dialog__skip-list">
-              <span className="competition-preview-dialog__skip-label">Zrezygnowali:</span>
-              <div className="competition-preview-dialog__skip-items">
-                {resignedList.map((j) => (
-                  <span key={jumperKey(j)} className="competition-preview-dialog__skip-item">
-                    <CountryFlag country={j.country} /> {j.name} {j.surname}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="competition-preview-dialog__list-wrap">
-            <ul className="competition-preview-dialog__list" role="list">
-              {startListDisplay.map((j, idx) => {
-                const key = jumperKey(j);
-                const isParticipating = participatingKeys.has(key);
-                const isCoachJumper = j.country === coachCountry;
-                const canToggle = canToggleParticipation && isCoachJumper;
-                return (
-                  <li key={key} className="competition-preview-dialog__row">
-                    <span className="competition-preview-dialog__pos">{idx + 1}.</span>
-                    {canToggle ? (
-                      <label className="competition-preview-dialog__checkbox-label">
-                        <input
-                          type="checkbox"
-                          checked={isParticipating}
-                          onChange={() => toggleParticipating(j)}
-                        />
-                        <span className="competition-preview-dialog__flag"><CountryFlag country={j.country} /></span>
-                        <span>
-                          {j.name} {j.surname}
-                        </span>
-                      </label>
-                    ) : (
-                      <>
-                        <span className="competition-preview-dialog__flag"><CountryFlag country={j.country} /></span>
-                        <span>
-                          {j.name} {j.surname}
-                        </span>
-                      </>
-                    )}
-                  </li>
-                );
+        <div className="competition-preview-dialog__actions">
+          <button
+            type="button"
+            className="competition-preview-dialog__btn competition-preview-dialog__btn--secondary"
+            onClick={onCancel}
+          >
+            Anuluj
+          </button>
+          <button
+            type="button"
+            className="competition-preview-dialog__btn competition-preview-dialog__btn--primary"
+            onClick={() =>
+              onConfirm({
+                participating:
+                  event.type === 'trial' && event.gender === 'mixed' && !hasParticipationEdits
+                    ? undefined
+                    : participating,
+                autoBar: !manualBar,
+                juryBravery: manualBar ? undefined : juryBravery,
               })}
-            </ul>
-          </div>
-
-          <div className="competition-preview-dialog__actions">
-            <button
-              type="button"
-              className="competition-preview-dialog__btn competition-preview-dialog__btn--secondary"
-              onClick={onCancel}
-            >
-              Anuluj
-            </button>
-            <button
-              type="button"
-              className="competition-preview-dialog__btn competition-preview-dialog__btn--primary"
-              onClick={() =>
-                onConfirm({
-                  participating:
-                    event.type === 'trial' && event.gender === 'mixed' && !hasParticipationEdits
-                      ? undefined
-                      : participating,
-                  autoBar: !manualBar,
-                  juryBravery: manualBar ? undefined : juryBravery,
-                })}
-            >
-              Przejdź do konkursu
-            </button>
-          </div>
+          >
+            Przejdź do konkursu
+          </button>
         </div>
       </div>
     </div>

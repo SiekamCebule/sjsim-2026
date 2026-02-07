@@ -53,6 +53,11 @@ jobs:
         working-directory: packages/ui
         run: npx vite build
 
+      - name: Build Core package
+        shell: bash
+        working-directory: packages/core
+        run: npx tsc -p tsconfig.json
+
       - name: Build Electron main process
         shell: bash
         working-directory: packages/app

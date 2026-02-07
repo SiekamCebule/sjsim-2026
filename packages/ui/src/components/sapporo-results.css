@@ -453,6 +453,7 @@
   z-index: 100;
   padding: var(--space-6);
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .sapporo-results__dialog {
@@ -463,6 +464,9 @@
   max-width: 400px;
   width: 100%;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  margin: auto;
 }
 
 .sapporo-results__dialog-title {
