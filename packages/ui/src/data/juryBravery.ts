@@ -19,32 +19,44 @@ export const JURY_BRAVERY_OPTIONS: JuryBravery[] = [
 
 type BraveryWeight = { bravery: JuryBravery; weight: number };
 
+// Treningi (kobiet, mężczyzn): 30% low, 70% veryLow
 const TRAINING_BRAVERY: BraveryWeight[] = [
-  { bravery: JuryBravery.High, weight: 0.1 },
-  { bravery: JuryBravery.Medium, weight: 0.45 },
-  { bravery: JuryBravery.Low, weight: 0.4 },
-  { bravery: JuryBravery.VeryLow, weight: 0.05 },
+  { bravery: JuryBravery.Low, weight: 0.3 },
+  { bravery: JuryBravery.VeryLow, weight: 0.7 },
 ];
 
+// Seria próbna (kobiet, mężczyzn): 50% low, 50% veryLow
 const TRIAL_BRAVERY: BraveryWeight[] = [
-  { bravery: JuryBravery.High, weight: 0.05 },
-  { bravery: JuryBravery.Medium, weight: 0.3 },
-  { bravery: JuryBravery.Low, weight: 0.55 },
-  { bravery: JuryBravery.VeryLow, weight: 0.1 },
+  { bravery: JuryBravery.Low, weight: 0.5 },
+  { bravery: JuryBravery.VeryLow, weight: 0.5 },
 ];
 
-const INDIVIDUAL_BRAVERY: BraveryWeight[] = [
-  { bravery: JuryBravery.High, weight: 0.15 },
+// Konkurs indywidualny mężczyzn: 20% high, 75% medium, 5% low
+const INDIVIDUAL_MEN_BRAVERY: BraveryWeight[] = [
+  { bravery: JuryBravery.High, weight: 0.2 },
   { bravery: JuryBravery.Medium, weight: 0.75 },
-  { bravery: JuryBravery.Low, weight: 0.1 },
-  { bravery: JuryBravery.VeryLow, weight: 0.0 },
+  { bravery: JuryBravery.Low, weight: 0.05 },
 ];
 
-const MIXED_BRAVERY: BraveryWeight[] = [
+// Konkurs indywidualny kobiet: 10% high, 60% medium, 30% low
+const INDIVIDUAL_WOMEN_BRAVERY: BraveryWeight[] = [
   { bravery: JuryBravery.High, weight: 0.1 },
-  { bravery: JuryBravery.Medium, weight: 0.65 },
-  { bravery: JuryBravery.Low, weight: 0.23 },
-  { bravery: JuryBravery.VeryLow, weight: 0.02 },
+  { bravery: JuryBravery.Medium, weight: 0.6 },
+  { bravery: JuryBravery.Low, weight: 0.3 },
+];
+
+// Konkurs mikstów: 5% high, 60% medium, 35% low
+const MIXED_BRAVERY: BraveryWeight[] = [
+  { bravery: JuryBravery.High, weight: 0.05 },
+  { bravery: JuryBravery.Medium, weight: 0.6 },
+  { bravery: JuryBravery.Low, weight: 0.35 },
+];
+
+// Konkurs duetów: 20% high, 75% medium, 5% low
+const DUETS_BRAVERY: BraveryWeight[] = [
+  { bravery: JuryBravery.High, weight: 0.2 },
+  { bravery: JuryBravery.Medium, weight: 0.75 },
+  { bravery: JuryBravery.Low, weight: 0.05 },
 ];
 
 function weightsForEvent(event: ScheduleItem): BraveryWeight[] {
@@ -54,12 +66,16 @@ function weightsForEvent(event: ScheduleItem): BraveryWeight[] {
     case 'trial':
       return TRIAL_BRAVERY;
     case 'individual':
+      // Rozróżnienie na konkursy kobiet i mężczyzn
+      return event.gender === 'women'
+        ? INDIVIDUAL_WOMEN_BRAVERY
+        : INDIVIDUAL_MEN_BRAVERY;
     case 'team_men_pairs':
-      return INDIVIDUAL_BRAVERY;
+      return DUETS_BRAVERY;
     case 'team_mixed':
       return MIXED_BRAVERY;
     default:
-      return INDIVIDUAL_BRAVERY;
+      return INDIVIDUAL_MEN_BRAVERY;
   }
 }
 

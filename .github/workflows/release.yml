@@ -53,13 +53,28 @@ jobs:
         working-directory: packages/ui
         run: npx vite build
 
+      - name: Build Core package
+        shell: bash
+        working-directory: packages/core
+        run: npx tsc -p tsconfig.json
+
       - name: Build Electron main process
         shell: bash
-        run: npx tsc -p packages/app/tsconfig.json
+        working-directory: packages/app
+        run: npx tsc -p tsconfig.json
 
       - name: Debug – list app dist
         shell: bash
         run: ls -la packages/app/dist/ || echo "dist/ DOES NOT EXIST"
+
+      - name: Verify main.js exists
+        shell: bash
+        run: |
+          if [ ! -f packages/app/dist/main.js ]; then
+            echo "ERROR: packages/app/dist/main.js does not exist!"
+            exit 1
+          fi
+          echo "✓ main.js exists"
 
       - name: Copy UI dist into app
         shell: bash

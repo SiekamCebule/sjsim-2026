@@ -12,22 +12,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import {
-  runEvent,
+  runSapporoWeekend,
   createDefaultRandom,
-  SimpleJumpSimulator,
-  windEngine,
-  constantGatePolicy,
-  HILL_PARAMS,
-  selectStartingGate,
-  JuryBravery,
-  type IndividualEventInput,
-  type IndividualEventResult,
-  type QualificationResult,
   type SimulationJumper,
   type JumperSkills,
-  type Wind,
-  type SeriesResult,
-  type SeriesJumpEntry,
+  type SapporoWeekendResult,
 } from '../packages/core/src/index';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -187,119 +176,31 @@ function buildRosterAndOrder(
   return { roster, worldCupOrderIds };
 }
 
-// --- Hill: Sapporo HS137 ---
-const SAPPORO_HILL = {
-  simulationData: {
-    kPoint: 123,
-    realHs: 137,
-    metersByGate: 5.5,
-  },
-} as const;
+// --- Formatting helpers ---
+function printSingleSeriesStep(step: { rows: readonly any[]; gate: number }): void {
+  console.log(`  Wyniki (belka ${step.gate}):`);
+  console.log('  M. BIB  Zawodnik                    Skok              Punkty');
 
-const SAPPORO_SCORING = HILL_PARAMS['sapporo-hs137']!;
-
-/** Belka startowa przed rundą – metoda iteracyjna. Domyślnie Medium, na trening High. */
-function selectGate(
-  roster: SimulationJumper[],
-  jumpSimulator: Parameters<typeof selectStartingGate>[0]['simulator'],
-  windProvider: Parameters<typeof selectStartingGate>[0]['windProvider'],
-  bravery: JuryBravery = JuryBravery.Medium
-): number {
-  return selectStartingGate({
-    simulator: jumpSimulator,
-    windProvider,
-    juryBravery: bravery,
-    jumpers: roster,
-    hill: SAPPORO_HILL,
+  step.rows.forEach((row) => {
+    const name = row.jumperId.padEnd(28);
+    const line = `${row.distance.toFixed(1)} m, ${row.points.toFixed(1)} pkt`;
+    console.log(`  ${String(row.position).padStart(2)}. ${String(row.bib).padStart(3)}  ${name}  ${line}`);
   });
 }
 
-/** Wyniki jednej serii posortowane wg pozycji (najlepsi pierwsi). */
-function orderByPoints(series: SeriesResult): SeriesJumpEntry[] {
-  return [...series.jumps].sort((a, b) => b.result.points - a.result.points);
-}
-
-/** Suma punktów po wszystkich seriach (indeks = BIB - 1). */
-function totalByBibFromSeries(series: readonly SeriesResult[]): number[] {
-  const maxBib = Math.max(0, ...series.flatMap((s) => s.jumps.map((j) => j.bib)));
-  const total = new Array<number>(maxBib).fill(0);
-  for (const s of series) {
-    for (const j of s.jumps) {
-      total[j.bib - 1] = (total[j.bib - 1] ?? 0) + j.result.points;
-    }
-  }
-  return total;
-}
-
-/** Kolejność BIBów wg sumy punktów (najlepsi pierwsi). */
-function finalOrderFromSeries(series: readonly SeriesResult[]): number[] {
-  const total = totalByBibFromSeries(series);
-  const bibs = [...new Set(series.flatMap((s) => s.jumps.map((j) => j.bib)))];
-  return bibs.sort((a, b) => (total[b - 1] ?? 0) - (total[a - 1] ?? 0));
-}
-
-/** Jedna seria: tabela wg pozycji (M. BIB Zawodnik Skok Punkty). */
-function printSingleSeriesByPosition(series: SeriesResult, title: string): void {
-  console.log(`  ${title}`);
-  const ordered = orderByPoints(series);
-  console.log('  M. BIB  Zawodnik                    Skok 1              Punkty');
-  ordered.forEach((j, idx) => {
-    const r = j.result;
-    const name = j.jumper.id.padEnd(28);
-    const line1 = `${r.distance.toFixed(1)} m, ${r.points.toFixed(1)} pkt`;
-    console.log(`  ${String(idx + 1).padStart(2)}. ${String(j.bib).padStart(3)}  ${name}  ${line1}`);
-  });
-}
-
-/** Dwie serie: tabela wg pozycji jak konkurs (M. BIB Zawodnik Skok 1 Skok 2 Suma). */
-function printTwoSeriesByPosition(
-  series: readonly [SeriesResult, SeriesResult],
-  totalByBib: readonly number[],
-  finalOrder: readonly number[]
-): void {
-  const jumpByBib = (s: SeriesResult): Map<number, SeriesJumpEntry> => {
-    const m = new Map<number, SeriesJumpEntry>();
-    for (const j of s.jumps) m.set(j.bib, j);
-    return m;
-  };
-  const s0 = jumpByBib(series[0]);
-  const s1 = jumpByBib(series[1]);
+function printTwoSeriesStep(step: { rows: readonly any[]; gate1: number; gate2: number }): void {
+  console.log(`  Belka 1: ${step.gate1}, Belka 2: ${step.gate2}`);
   console.log('  M. BIB  Zawodnik                    Skok 1        Skok 2       Suma');
-  finalOrder.forEach((bib, idx) => {
-    const entry0 = s0.get(bib);
-    const name = (entry0?.jumper.id ?? `BIB${bib}`).padEnd(28);
-    const r1 = entry0?.result;
-    const r2 = s1.get(bib)?.result;
-    const line1 = r1 ? `${r1.distance.toFixed(1)} m, ${r1.points.toFixed(1)} pkt` : '-';
-    const line2 = r2 ? `${r2.distance.toFixed(1)} m, ${r2.points.toFixed(1)} pkt` : '-';
-    const total = (totalByBib[bib - 1] ?? 0).toFixed(1);
-    console.log(`  ${String(idx + 1).padStart(2)}. ${String(bib).padStart(3)}  ${name}  ${line1.padEnd(14)}  ${line2.padEnd(14)}  ${total} pkt`);
+
+  step.rows.forEach((row) => {
+    const name = row.jumperId.padEnd(28);
+    const line1 = `${row.jump1.distance.toFixed(1)} m, ${row.jump1.points.toFixed(1)} pkt`;
+    const line2 = row.jump2
+      ? `${row.jump2.distance.toFixed(1)} m, ${row.jump2.points.toFixed(1)} pkt`
+      : '-';
+    const total = row.total.toFixed(1);
+    console.log(`  ${String(row.position).padStart(2)}. ${String(row.bib).padStart(3)}  ${name}  ${line1.padEnd(14)}  ${line2.padEnd(14)}  ${total} pkt`);
   });
-}
-
-function printTrainingResult(
-  result: { series: readonly SeriesResult[] },
-  _roster: SimulationJumper[]
-): void {
-  const totalByBib = totalByBibFromSeries(result.series);
-  const finalOrder = finalOrderFromSeries(result.series);
-  console.log(`  Seria 1 belka ${result.series[0]!.startGate}, Seria 2 belka ${result.series[1]!.startGate}`);
-  printTwoSeriesByPosition(
-    [result.series[0]!, result.series[1]!],
-    totalByBib,
-    finalOrder
-  );
-}
-
-function printCompetitionResult(
-  result: IndividualEventResult,
-  _roster: SimulationJumper[]
-): void {
-  printTwoSeriesByPosition(
-    [result.series[0]!, result.series[1]!],
-    result.totalPointsByBib,
-    result.finalOrder
-  );
 }
 
 // --- Run weekend ---
@@ -332,140 +233,30 @@ function main(): void {
 
   const { roster, worldCupOrderIds } = buildRosterAndOrder(callups, all, worldCupOrder);
   const random = createDefaultRandom();
-  const jumpSimulator = new SimpleJumpSimulator(
-    { skillImpactFactor: 1.5, averageBigSkill: 5, takeoffRatingPointsByForm: 1.5, flightRatingPointsByForm: 1.8 },
-    random
-  );
-  const baseWind: Wind = { average: 2.4, instability: 0.1 };
 
-  const runDeps = {
-    jumpSimulator,
-    windProvider: windEngine(
-      { baseAverage: baseWind.average, windVariability: baseWind.instability },
-      random
-    ),
-    gatePolicy: constantGatePolicy(0),
+  // Używamy runSapporoWeekend z core - jeden symulator dla całej aplikacji!
+  const result = runSapporoWeekend({
+    roster,
+    worldCupOrderIds,
     random,
-  };
+  });
 
-  const hill = SAPPORO_HILL;
-  const hillScoring = SAPPORO_SCORING;
+  // Wyświetlamy wszystkie kroki (steps) w kolejności
+  for (const step of result.steps) {
+    if (step.day === 'friday') {
+      console.log(`\n--- Piątek: ${step.eventLabel} ---`);
+    } else if (step.day === 'saturday') {
+      console.log(`\n--- Sobota: ${step.eventLabel} ---`);
+    } else if (step.day === 'sunday') {
+      console.log(`\n--- Niedziela: ${step.eventLabel} ---`);
+    }
 
-  // Piątek: trening (2 serie)
-  console.log('--- Piątek: trening (2 serie) ---');
-  const startGateTraining = selectGate(roster, runDeps.jumpSimulator, runDeps.windProvider, JuryBravery.High);
-  console.log(`  Belka startowa (JuryBravery=High): ${startGateTraining}`);
-  const trainingInput: IndividualEventInput = {
-    kind: 'training',
-    hill,
-    hillScoring,
-    startGate: startGateTraining,
-    windBase: baseWind,
-    roster,
-    worldCupOrder: worldCupOrderIds,
-    numberOfSeries: 2,
-  };
-  const trainingResult = runEvent(trainingInput, runDeps);
-  if (trainingResult.kind !== 'training') throw new Error('Expected training');
-  printTrainingResult(trainingResult, roster);
-
-  console.log('\n--- Piątek: kwalifikacje (awans 50) ---');
-  const startGateQuali1 = selectGate(roster, runDeps.jumpSimulator, runDeps.windProvider);
-  console.log(`  Belka startowa (JuryBravery=Medium): ${startGateQuali1}`);
-  const quali1Input: IndividualEventInput = {
-    kind: 'qualification',
-    hill,
-    hillScoring,
-    startGate: startGateQuali1,
-    windBase: baseWind,
-    roster,
-    worldCupOrder: worldCupOrderIds,
-    qualificationAdvance: 50,
-  };
-  const quali1Result = runEvent(quali1Input, runDeps) as QualificationResult;
-  const qualifiedBibs1 = quali1Result.qualifiedBibs;
-  console.log(`  Awansowało: ${qualifiedBibs1.length}`);
-  printSingleSeriesByPosition(quali1Result.series[0]!, 'Wyniki kwalifikacji (belka ' + quali1Result.series[0]!.startGate + '):');
-
-  // Po kwalifikacjach kolejność dalej od PŚ; dopiero 2. seria konkursu na bazie 1. serii
-  const qualifiedIds1 = qualifiedBibs1
-    .map((bib) => roster[bib - 1]?.id)
-    .filter((id): id is string => id != null);
-  const orderSaturday = [...qualifiedIds1].sort(
-    (a, b) => worldCupOrderIds.indexOf(a) - worldCupOrderIds.indexOf(b)
-  );
-
-  const rosterSaturday = qualifiedBibs1
-    .map((bib) => roster[bib - 1])
-    .filter((j): j is SimulationJumper => j != null);
-
-  console.log('\n--- Sobota: seria próbna ---');
-  const startGateTrial = selectGate(rosterSaturday, runDeps.jumpSimulator, runDeps.windProvider);
-  console.log(`  Belka startowa (JuryBravery=Medium): ${startGateTrial}`);
-  const trialInput: IndividualEventInput = {
-    kind: 'trial',
-    hill,
-    hillScoring,
-    startGate: startGateTrial,
-    windBase: baseWind,
-    roster: rosterSaturday,
-    worldCupOrder: orderSaturday,
-  };
-  const trialResult = runEvent(trialInput, runDeps);
-  if (trialResult.kind !== 'trial') throw new Error('Expected trial');
-  printSingleSeriesByPosition(trialResult.series[0]!, 'Wyniki serii próbnej (belka ' + trialResult.series[0]!.startGate + '):');
-
-  console.log('\n--- Sobota: konkurs indywidualny ---');
-  const startGateInd1 = selectGate(rosterSaturday, runDeps.jumpSimulator, runDeps.windProvider);
-  console.log(`  Belka startowa (JuryBravery=Medium): ${startGateInd1}`);
-  const ind1Input: IndividualEventInput = {
-    kind: 'individual',
-    hill,
-    hillScoring,
-    startGate: startGateInd1,
-    windBase: baseWind,
-    roster: rosterSaturday,
-    worldCupOrder: orderSaturday,
-  };
-  const ind1Result = runEvent(ind1Input, runDeps) as IndividualEventResult;
-  printCompetitionResult(ind1Result, rosterSaturday);
-
-  console.log('\n--- Niedziela: kwalifikacje ---');
-  const startGateQuali2 = selectGate(roster, runDeps.jumpSimulator, runDeps.windProvider);
-  console.log(`  Belka startowa (JuryBravery=Medium): ${startGateQuali2}`);
-  const quali2Input: IndividualEventInput = {
-    ...quali1Input,
-    startGate: startGateQuali2,
-  };
-  const quali2Result = runEvent(quali2Input, runDeps) as QualificationResult;
-  const qualifiedBibs2 = quali2Result.qualifiedBibs;
-  console.log(`  Awansowało: ${qualifiedBibs2.length}`);
-  printSingleSeriesByPosition(quali2Result.series[0]!, 'Wyniki kwalifikacji (belka ' + quali2Result.series[0]!.startGate + '):');
-
-  const qualifiedIds2 = qualifiedBibs2
-    .map((bib) => roster[bib - 1]?.id)
-    .filter((id): id is string => id != null);
-  const orderSunday = [...qualifiedIds2].sort(
-    (a, b) => worldCupOrderIds.indexOf(a) - worldCupOrderIds.indexOf(b)
-  );
-  const rosterSunday = qualifiedBibs2
-    .map((bib) => roster[bib - 1])
-    .filter((j): j is SimulationJumper => j != null);
-
-  console.log('\n--- Niedziela: konkurs indywidualny ---');
-  const startGateInd2 = selectGate(rosterSunday, runDeps.jumpSimulator, runDeps.windProvider);
-  console.log(`  Belka startowa (JuryBravery=Medium): ${startGateInd2}`);
-  const ind2Input: IndividualEventInput = {
-    kind: 'individual',
-    hill,
-    hillScoring,
-    startGate: startGateInd2,
-    windBase: baseWind,
-    roster: rosterSunday,
-    worldCupOrder: orderSunday,
-  };
-  const ind2Result = runEvent(ind2Input, runDeps) as IndividualEventResult;
-  printCompetitionResult(ind2Result, rosterSunday);
+    if (step.kind === 'single') {
+      printSingleSeriesStep(step);
+    } else if (step.kind === 'two') {
+      printTwoSeriesStep(step);
+    }
+  }
 
   console.log('\n=== Koniec symulacji Sapporo ===');
 }

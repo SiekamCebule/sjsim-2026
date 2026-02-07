@@ -9,6 +9,7 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.6);
   padding: var(--space-4);
+  overflow-y: auto;
 }
 
 .competition-preview-dialog {
@@ -17,12 +18,21 @@
   border-radius: var(--radius-lg);
   max-width: 720px;
   width: 100%;
-  max-height: 85vh;
-  min-height: 400px;
-  display: grid;
-  grid-template-columns: minmax(220px, 260px) 1fr;
+  max-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  margin: auto;
+}
+
+/* Przewijana treść; pasek przycisków jest zawsze na dole (poza tym blokiem) */
+.competition-preview-dialog__body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) 1fr;
 }
 
 /* Lewa kolumna: prognoza + belka */
@@ -357,13 +367,19 @@
   font-size: 1.1em;
 }
 
+/* Pasek przycisków ZAWSZE na dole dialogu — nigdy nie ucięty */
 .competition-preview-dialog__actions {
   flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-5);
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  min-height: 3.5rem;
   border-top: var(--border-width) solid var(--border-color);
+  background: var(--color-surface);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .competition-preview-dialog__btn {

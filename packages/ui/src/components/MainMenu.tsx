@@ -2,7 +2,7 @@ import type { JSX } from 'react';
 import { useState } from 'react';
 import menuBg from '@assets/predazzo_hq.jpeg';
 
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.0.2';
 
 interface MainMenuProps {
   onNewGame: () => void;

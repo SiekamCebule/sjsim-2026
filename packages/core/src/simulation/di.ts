@@ -11,15 +11,14 @@ import { SimpleJumpSimulator } from './SimpleJumpSimulator';
 
 export const JumpSimulatorToken = createToken<IJumpSimulator>('JumpSimulator');
 export const RandomToken = createToken<IRandom>('Random');
-
-const defaultSimulatorConfig: SimulatorConfiguration = {
-  skillImpactFactor: 1,
+export const defaultSimulatorConfig: SimulatorConfiguration = {
+  skillImpactFactor: 1.45,
   averageBigSkill: 7,
   takeoffRatingPointsByForm: 1.5,
   flightRatingPointsByForm: 1.8,
   flightToTakeoffRatio: 1,
-  randomAdditionsRatio: 1,
-  distanceSpreadByRatingFactor: 1,
+  randomAdditionsRatio: 0.95,
+  distanceSpreadByRatingFactor: 0.9,
   hsFlatteningStartRatio: 0.07,
   hsFlatteningStrength: 1.0,
 };

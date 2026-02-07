@@ -17,11 +17,13 @@ const resolveRendererEntry = (): { type: 'url' | 'file'; value: string } => {
 
 const createWindow = async (): Promise<void> => {
   const { type, value } = resolveRendererEntry();
+  const iconPath = path.resolve(__dirname, '../../assets/logo.png');
   const window = new BrowserWindow({
     width: 1280,
     height: 720,
     show: false,
     autoHideMenuBar: true,
+    icon: iconPath,
     webPreferences: {
       preload: path.resolve(__dirname, 'preload.js')
     }
