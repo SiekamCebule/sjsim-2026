@@ -19,7 +19,11 @@ Gra jest przedmiotem wyzwania, mającego na celu stworzenie rozbudowanego symula
 - Możliwość zapisu gry i wrócenia do niej
 
 ## Screenshots
-
+<img width="1816" height="1111" alt="image" src="https://github.com/user-attachments/assets/b83faabe-62e2-4366-9ae8-5a099d45d559" />
+<img width="1941" height="1016" alt="image" src="https://github.com/user-attachments/assets/c508e40f-c39f-423a-a0ff-9264936be30d" />
+<img width="1939" height="1096" alt="image" src="https://github.com/user-attachments/assets/072b4306-0f24-4eed-af73-1d612e32e691" />
+<img width="910" height="619" alt="image" src="https://github.com/user-attachments/assets/77b2f1fb-98b9-4202-b8fe-dd6a501495e9" />
+<img width="1958" height="1124" alt="image" src="https://github.com/user-attachments/assets/6e21fa4e-fa6c-4c1e-823d-2c5c49f446e9" />
 
 
 ## For developers
