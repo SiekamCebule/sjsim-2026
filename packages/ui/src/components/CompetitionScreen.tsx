@@ -14,6 +14,7 @@ import {
   windEngine,
   HILL_PARAMS,
   JuryBravery,
+  defaultSimulatorConfig,
   type HillScoringParams,
   type IndividualStanding,
   type JumpResult as CoreJumpResult,
@@ -87,16 +88,8 @@ interface JumpResult {
   styleNotes: number[] | null;
 }
 
-const SIMULATOR_CONFIG = {
-  skillImpactFactor: 1.5,
-  averageBigSkill: 7,
-  takeoffRatingPointsByForm: 1.5,
-  flightRatingPointsByForm: 1.8,
-  randomAdditionsRatio: 0.9,
-  distanceSpreadByRatingFactor: 1.2,
-  hsFlatteningStartRatio: 0.07,
-  hsFlatteningStrength: 1.0,
-};
+// Używamy wspólnej konfiguracji z @sjsim/core
+const SIMULATOR_CONFIG = defaultSimulatorConfig;
 
 /** Zakres delty belki względem startowej: od -GATE_DELTA_RANGE do +GATE_DELTA_RANGE (ręczna i auto). */
 const GATE_DELTA_RANGE = 12;

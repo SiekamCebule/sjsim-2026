@@ -23,6 +23,7 @@ export {
   JumpSimulatorToken,
   RandomToken,
   registerDefaultJumpSimulator,
+  defaultSimulatorConfig,
   type DiContainer,
 } from './di';
 export {

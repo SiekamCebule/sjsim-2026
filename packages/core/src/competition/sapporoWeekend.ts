@@ -8,6 +8,7 @@ import type { SimulationJumper } from '../simulation/types';
 import { createDefaultRandom } from '../simulation/random';
 import { applyFormChangeToRoster, FORM_CHANGE_ALPHA } from '../simulation/formChange';
 import { SimpleJumpSimulator } from '../simulation/SimpleJumpSimulator';
+import { defaultSimulatorConfig } from '../simulation/di';
 import { runEvent } from './runEvent';
 import { windEngine } from './windEngine';
 import type { IGatePolicy } from './IGatePolicy';
@@ -303,20 +304,7 @@ export function runSapporoWeekend(params: RunSapporoWeekendParams): SapporoWeeke
   const random = providedRandom ?? createDefaultRandom();
   let rosterState: SimulationJumper[] = [...params.roster];
 
-  const jumpSimulator = new SimpleJumpSimulator(
-    {
-      // Skille 1–10, forma 0–10 (CSV 1–100 / 0–100 dzielone przez 10). Możesz zmieniać:
-      skillImpactFactor: 1.5,           // wpływ różnicy umiejętności
-      averageBigSkill: 7,               // „średnia” umiejętność 1–10
-      takeoffRatingPointsByForm: 1.5,   // rating wybicia za 1 pt formy (większy = forma bardziej decyduje)
-      flightRatingPointsByForm: 1.8,    // rating lotu za 1 pt formy
-      randomAdditionsRatio: 0.9,
-      distanceSpreadByRatingFactor: 1.2,
-      hsFlatteningStartRatio: 0.07,
-      hsFlatteningStrength: 1.0,
-    },
-    random
-  );
+  const jumpSimulator = new SimpleJumpSimulator(defaultSimulatorConfig, random);
 
   const makeBaseWind = (mean: number, dev: number, varMean: number, varDev: number): Wind => ({
     average: random.gaussian(mean, dev),

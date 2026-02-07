@@ -30,6 +30,7 @@ export {
   JumpSimulatorToken,
   RandomToken,
   registerDefaultJumpSimulator,
+  defaultSimulatorConfig,
 } from './simulation';
 
 export {

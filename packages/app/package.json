@@ -1,6 +1,6 @@
 {
   "name": "@sjsim/app",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Sj.Sim Predazzo Edition",
   "homepage": "https://github.com/SiekamCebule/sj-sim",
@@ -44,32 +44,24 @@
     "appId": "com.sjsim.predazzo2026",
     "productName": "Sj.Sim Predazzo Edition",
     "artifactName": "Sj.Sim Predazzo Edition-${version}-${os}-${arch}.${ext}",
+    "icon": "../../assets/logo.png",
     "directories": {
       "app": ".",
       "output": "release"
     },
     "files": [
-      {
-        "from": "dist",
-        "to": "dist",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
-        "from": "ui/dist",
-        "to": "ui/dist",
-        "filter": [
-          "**/*"
-        ]
-      },
-      "package.json"
+      "dist/**/*",
+      "ui/dist/**/*",
+      "package.json",
+      "!src/**",
+      "!*.ts",
+      "!tsconfig.json"
     ],
     "asarUnpack": [
       "node_modules/better-sqlite3/**",
       "node_modules/bindings/**"
     ],
-    "asar": true,
+    "asar": false,
     "npmRebuild": true,
     "linux": {
       "target": [
@@ -77,17 +69,20 @@
         "deb"
       ],
       "category": "Game",
-      "maintainer": "SJSIM Team <dev@sjsim.local>"
+      "maintainer": "SJSIM Team <dev@sjsim.local>",
+      "icon": "../../assets/logo.png"
     },
     "win": {
       "target": [
         "nsis"
-      ]
+      ],
+      "icon": "../../assets/logo.png"
     },
     "mac": {
       "target": [
         "dmg"
-      ]
+      ],
+      "icon": "../../assets/logo.png"
     }
   }
 }
