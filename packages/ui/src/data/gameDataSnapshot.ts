@@ -78,6 +78,41 @@ export const resolveWomenTeams = (snapshot?: GameDataSnapshot | null): Jumper[] 
   return enrichWithSkills(raw, getWomenJumpersAll());
 };
 
+type MenCallupsOverrides = Record<string, Jumper[]>;
+
+function mergeTeamsByCountry(base: Jumper[], overrides: MenCallupsOverrides): Jumper[] {
+  const byCountry = new Map<string, Jumper[]>();
+  base.forEach((jumper) => {
+    const list = byCountry.get(jumper.country) ?? [];
+    list.push(jumper);
+    byCountry.set(jumper.country, list);
+  });
+  Object.entries(overrides).forEach(([country, roster]) => {
+    if (roster && roster.length > 0) {
+      byCountry.set(country, roster);
+    }
+  });
+  return [...byCountry.values()].flat();
+}
+
+export const resolveMenTeamsWithCallups = (
+  snapshot?: GameDataSnapshot | null,
+  options?: {
+    allCallups?: MenCallupsOverrides;
+    selectedCountry?: string | null;
+    selectedJumpers?: Jumper[];
+  }
+): Jumper[] => {
+  const base = resolveMenTeams(snapshot);
+  if (options?.allCallups && Object.keys(options.allCallups).length > 0) {
+    return mergeTeamsByCountry(base, options.allCallups);
+  }
+  if (options?.selectedCountry && options.selectedJumpers && options.selectedJumpers.length > 0) {
+    return mergeTeamsByCountry(base, { [options.selectedCountry]: options.selectedJumpers });
+  }
+  return base;
+};
+
 export const resolveMenWorldCupOrder = (snapshot?: GameDataSnapshot | null): string[] =>
   snapshot?.menWorldCupOrder ?? getWorldCupOrderAll();
 

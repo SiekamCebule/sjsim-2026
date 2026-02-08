@@ -16,7 +16,7 @@ import { countryCodeToName, type Jumper } from '../data/jumpersData';
 import { CountryFlag } from './CountryFlag';
 import type { GameDataSnapshot } from '../data/gameDataSnapshot';
 import {
-  resolveMenTeams,
+  resolveMenTeamsWithCallups,
   resolveWomenTeams,
   resolveMenJumpers,
   resolveWomenJumpers,
@@ -901,7 +901,11 @@ export const PredazzoDashboard = ({
   const schedule = resolveSchedule(gameData);
   const next = getNextEventByProgress(completedEventIds, trainingBlockProgress, schedule);
   const weather = getNextEventWeather(next, trainingBlockProgress, schedule);
-  const menTeams = resolveMenTeams(gameData);
+  const menTeams = resolveMenTeamsWithCallups(gameData, {
+    allCallups: config?.allCallups,
+    selectedCountry: config?.selectedCountry,
+    selectedJumpers: config?.selectedJumpers,
+  });
   const womenTeams = resolveWomenTeams(gameData);
   const allJumpers = [...resolveMenJumpers(gameData), ...resolveWomenJumpers(gameData)];
   const menWorldCupOrder = resolveMenWorldCupOrder(gameData);
