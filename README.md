@@ -2,7 +2,7 @@
 
 🇵🇱 Sj.Sim Predazzo Edition jest kontynuacją serii symulatorów skoków narciarskich [Sj.Sim](https://github.com/SiekamCebule/sj-sim). Gracz wciela się w trenera lub dyrektora podczas zawodów we włoskim Predazzo w roku 2026.
 
-Gra jest przedmiotem wyzwania, mającego na celu stworzenie rozbudowanego symulatora skoków narciarskich w możliwie jak najkrótszym czasie, ukazując przy tym możliwości współczesnych narzędzi AI (użyto: Cursor, ChatGPT). Grę planowano stworzyć w 24 godziny, ale końcowo skończono po około 51 godzinach od rozpoczęcia prac.
+Gra jest przedmiotem wyzwania, mającego na celu stworzenie rozbudowanego symulatora skoków narciarskich w możliwie jak najkrótszym czasie, ukazując przy tym możliwości współczesnych narzędzi AI (użyto: Cursor, ChatGPT). Grę planowano stworzyć w 24 godziny, ale ostatezcnie wersję 1.0.0 wydano po około 53 godzinach od rozpoczęcia prac.
 
 ## Główne funkcjonalności
 - Około 90 skoczków narciarskich i 50 skoczkiń
