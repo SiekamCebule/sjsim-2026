@@ -32,7 +32,7 @@ import {
 import { CountryFlag } from './CountryFlag';
 import type { GameDataSnapshot } from '../data/gameDataSnapshot';
 import {
-  resolveMenTeams,
+  resolveMenTeamsWithCallups,
   resolveWomenTeams,
   resolveMenWorldCupOrder,
   resolveWomenWorldCupOrder,
@@ -419,16 +419,21 @@ export const CompetitionScreen = ({
     setShowJuryBraveryDialog(isDirector && autoBar && !initialJuryBravery);
   }, [event.id, initialJuryBravery, isDirector, autoBar]);
 
-  const menTeams = useMemo(() => resolveMenTeams(gameData), [gameData]);
+  const menTeams = useMemo(
+    () =>
+      resolveMenTeamsWithCallups(gameData, {
+        allCallups: config?.allCallups,
+        selectedCountry: config?.selectedCountry,
+        selectedJumpers: config?.selectedJumpers,
+      }),
+    [gameData, config?.allCallups, config?.selectedCountry, config?.selectedJumpers]
+  );
   const womenTeams = useMemo(() => resolveWomenTeams(gameData), [gameData]);
 
   const individualRoster = useMemo(() => {
     if (participating && participating.length > 0) return participating;
     if (event.gender === 'women') return womenTeams;
-    if (event.gender === 'men') {
-      const callups = Object.values(config?.allCallups ?? {}).flat();
-      return callups.length > 0 ? callups : menTeams;
-    }
+    if (event.gender === 'men') return menTeams;
     return [];
   }, [event.gender, participating, config?.allCallups, menTeams, womenTeams]);
 

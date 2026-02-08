@@ -4,7 +4,7 @@ import type { ScheduleItem } from '../data/predazzoSchedule';
 import { type Jumper } from '../data/jumpersData';
 import { CountryFlag } from './CountryFlag';
 import type { GameDataSnapshot } from '../data/gameDataSnapshot';
-import { resolveMenTeams, resolveWomenTeams } from '../data/gameDataSnapshot';
+import { resolveMenTeamsWithCallups, resolveWomenTeams } from '../data/gameDataSnapshot';
 import type { GameConfigState } from './GameConfig';
 import './team-selection-dialog.css';
 
@@ -58,10 +58,15 @@ export const TeamSelectionDialog = ({
   onCancel,
 }: TeamSelectionDialogProps): JSX.Element => {
   const country = config?.selectedCountry ?? '';
-  const menRoster = useMemo(
-    () => resolveMenTeams(gameData).filter((j) => j.country === country),
-    [country, gameData]
-  );
+  const menRoster = useMemo(() => {
+    if (!country) return [];
+    const men = resolveMenTeamsWithCallups(gameData, {
+      allCallups: config?.allCallups,
+      selectedCountry: config?.selectedCountry,
+      selectedJumpers: config?.selectedJumpers,
+    });
+    return men.filter((j) => j.country === country);
+  }, [country, gameData, config?.allCallups, config?.selectedCountry, config?.selectedJumpers]);
   const womenRoster = useMemo(
     () => resolveWomenTeams(gameData).filter((j) => j.country === country),
     [country, gameData]

@@ -8,7 +8,7 @@ import { type Jumper } from '../data/jumpersData';
 import { CountryFlag } from './CountryFlag';
 import type { GameDataSnapshot } from '../data/gameDataSnapshot';
 import {
-  resolveMenTeams,
+  resolveMenTeamsWithCallups,
   resolveWomenTeams,
   resolveMenWorldCupOrder,
   resolveWomenWorldCupOrder,
@@ -136,10 +136,15 @@ export const CompetitionPreviewDialog = ({
 
   const fullStartList = useMemo(() => {
     const random = createDefaultRandom();
+    const menTeams = resolveMenTeamsWithCallups(gameData, {
+      allCallups: config?.allCallups,
+      selectedCountry: config?.selectedCountry,
+      selectedJumpers: config?.selectedJumpers,
+    });
+    const womenTeams = resolveWomenTeams(gameData);
     if (isDuetTrial(event)) {
-      const men = resolveMenTeams(gameData);
-      const jumperById = new Map(men.map((j) => [jumperId(j), j]));
-      const teams = buildTeamPairs(men, undefined, eventResults);
+      const jumperById = new Map(menTeams.map((j) => [jumperId(j), j]));
+      const teams = buildTeamPairs(menTeams, undefined, eventResults);
       const duetTeams = teams.map((t) => ({
         teamId: t.id,
         country: t.country,
@@ -150,22 +155,20 @@ export const CompetitionPreviewDialog = ({
       return startList.map((entry) => jumperById.get(entry.jumper.id)!).filter(Boolean);
     }
     if (event.gender === 'mixed') {
-      const men = resolveMenTeams(gameData);
-      const women = resolveWomenTeams(gameData);
       const menByCountry = new Map<string, Jumper[]>();
       const womenByCountry = new Map<string, Jumper[]>();
-      men.forEach((j) => {
+      menTeams.forEach((j) => {
         const list = menByCountry.get(j.country) ?? [];
         list.push(j);
         menByCountry.set(j.country, list);
       });
-      women.forEach((j) => {
+      womenTeams.forEach((j) => {
         const list = womenByCountry.get(j.country) ?? [];
         list.push(j);
         womenByCountry.set(j.country, list);
       });
       const jumperById = new Map<string, Jumper>();
-      [...men, ...women].forEach((j) => jumperById.set(jumperId(j), j));
+      [...menTeams, ...womenTeams].forEach((j) => jumperById.set(jumperId(j), j));
       const countries = [...menByCountry.keys()].filter((country) => {
         const menList = menByCountry.get(country) ?? [];
         const womenList = womenByCountry.get(country) ?? [];
@@ -198,21 +201,31 @@ export const CompetitionPreviewDialog = ({
       return startList.map((entry) => jumperById.get(entry.jumper.id)!).filter(Boolean);
     }
     if (event.gender === 'women') {
-      const womenRoster = resolveWomenTeams(gameData);
-      const simRoster = womenRoster.map(toSimulationJumper);
+      const simRoster = womenTeams.map(toSimulationJumper);
       const wcOrder = [...resolveWomenWorldCupOrder(gameData)].reverse();
       const startList = buildIndividualStartList(simRoster, wcOrder, random);
-      const jumperById = new Map(womenRoster.map((j) => [jumperId(j), j]));
+      const jumperById = new Map(womenTeams.map((j) => [jumperId(j), j]));
       return startList.map((entry) => jumperById.get(entry.jumper.id)!).filter(Boolean);
     }
-    const callups = Object.values(config?.allCallups ?? {}).flat();
-    const menRoster = callups.length > 0 ? callups : resolveMenTeams(gameData);
-    const simRoster = menRoster.map(toSimulationJumper);
+    const simRoster = menTeams.map(toSimulationJumper);
     const wcOrder = [...resolveMenWorldCupOrder(gameData)].reverse();
     const startList = buildIndividualStartList(simRoster, wcOrder, random);
-    const jumperById = new Map(menRoster.map((j) => [jumperId(j), j]));
+    const jumperById = new Map(menTeams.map((j) => [jumperId(j), j]));
     return startList.map((entry) => jumperById.get(entry.jumper.id)!).filter(Boolean);
-  }, [event.gender, event.type, event.trialKind, event.id, event.label, config?.allCallups, gameData, eventResults, coachCountry, teamLineupPreview]);
+  }, [
+    event.gender,
+    event.type,
+    event.trialKind,
+    event.id,
+    event.label,
+    config?.allCallups,
+    config?.selectedCountry,
+    config?.selectedJumpers,
+    gameData,
+    eventResults,
+    coachCountry,
+    teamLineupPreview,
+  ]);
 
   const skippedKeys = useMemo(() => {
     if (event.type !== 'training' && event.type !== 'trial') return new Set<string>();
