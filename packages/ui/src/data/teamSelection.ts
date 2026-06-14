@@ -147,6 +147,50 @@ function selectTopJumpers(
   return scored.slice(0, count).map((entry) => entry.jumper);
 }
 
+function isSpecialSurname(jumper: Jumper): boolean {
+  const surname = jumper.surname.toLowerCase();
+  return surname === 'hoerl' || surname === 'langmo';
+}
+
+function shouldBeFirst(jumper: Jumper): boolean {
+  return isSpecialSurname(jumper);
+}
+
+function reorderDuetMembers(members: Jumper[]): Jumper[] {
+  if (members.length < 2) return members;
+  const [first, second] = members;
+  // If second has special surname, put them first
+  if (shouldBeFirst(second)) {
+    return [second, first];
+  }
+  return members;
+}
+
+function reorderMixedTeamMembers(members: Jumper[]): Jumper[] {
+  if (members.length < 4) return members;
+  const [weakWoman, weakMan, strongWoman, strongMan] = members;
+  
+  // Check if any special surname should be first
+  if (shouldBeFirst(strongWoman)) {
+    // Strong woman goes to front
+    return [strongWoman, weakMan, weakWoman, strongMan];
+  }
+  if (shouldBeFirst(strongMan)) {
+    // Strong man goes to front
+    return [weakWoman, strongMan, strongWoman, weakMan];
+  }
+  if (shouldBeFirst(weakWoman)) {
+    // Weak woman already first, no change needed
+    return members;
+  }
+  if (shouldBeFirst(weakMan)) {
+    // Weak man already second, no change needed
+    return members;
+  }
+  
+  return members;
+}
+
 export function buildTeamPairs(
   menTeams: Jumper[],
   teamLineups?: Record<string, Jumper[]>,
@@ -162,13 +206,14 @@ export function buildTeamPairs(
   [...byCountry.entries()].forEach(([country, list]) => {
     const override = teamLineups?.[country]?.filter((j) => j.gender !== 'women') ?? [];
     // Duety: słabszy skoczek na slot 0, silniejszy na slot 1
-    const members =
+    let members =
       override.length >= 2
         ? [override[1]!, override[0]!]
         : list.length >= 2
           ? selectTopJumpers(list, 'men', eventResults, 2, true, 'duet')?.reverse() ?? null
           : null;
     if (!members) return;
+    members = reorderDuetMembers(members);
     teams.push({
       id: country,
       country,
@@ -210,12 +255,13 @@ export function buildMixedTeams(
     const bestWomen = womenList.length >= 2 ? selectTopJumpers(womenList, 'women', eventResults, 2, false, 'mixed') : null;
     const bestMen = menList.length >= 2 ? selectTopJumpers(menList, 'men', eventResults, 2, false, 'mixed') : null;
     // Drużyny mieszane: w porządku słaba kobieta, słaby mężczyzna, silna kobieta, silny mężczyzna
-    const members = hasOverride
+    let members = hasOverride
       ? [overrideWomen[1]!, overrideMen[1]!, overrideWomen[0]!, overrideMen[0]!]
       : bestWomen && bestMen
         ? [bestWomen[1], bestMen[1], bestWomen[0], bestMen[0]]
         : null;
     if (!members) return;
+    members = reorderMixedTeamMembers(members);
     if (allowedJumperIds && !members.every((m) => allowedJumperIds.has(jumperId(m)))) return;
     teams.push({
       id: country,
