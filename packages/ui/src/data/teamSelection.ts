@@ -161,11 +161,12 @@ export function buildTeamPairs(
   const teams: TeamEntry[] = [];
   [...byCountry.entries()].forEach(([country, list]) => {
     const override = teamLineups?.[country]?.filter((j) => j.gender !== 'women') ?? [];
+    // Duety: słabszy skoczek na slot 0, silniejszy na slot 1
     const members =
       override.length >= 2
-        ? [override[0]!, override[1]!]
+        ? [override[1]!, override[0]!]
         : list.length >= 2
-          ? selectTopJumpers(list, 'men', eventResults, 2, true, 'duet')
+          ? selectTopJumpers(list, 'men', eventResults, 2, true, 'duet')?.reverse() ?? null
           : null;
     if (!members) return;
     teams.push({
@@ -208,10 +209,11 @@ export function buildMixedTeams(
     const hasOverride = overrideWomen.length >= 2 && overrideMen.length >= 2;
     const bestWomen = womenList.length >= 2 ? selectTopJumpers(womenList, 'women', eventResults, 2, false, 'mixed') : null;
     const bestMen = menList.length >= 2 ? selectTopJumpers(menList, 'men', eventResults, 2, false, 'mixed') : null;
+    // Drużyny mieszane: w porządku słaba kobieta, słaby mężczyzna, silna kobieta, silny mężczyzna
     const members = hasOverride
-      ? [overrideWomen[0]!, overrideMen[0]!, overrideWomen[1]!, overrideMen[1]!]
+      ? [overrideWomen[1]!, overrideMen[1]!, overrideWomen[0]!, overrideMen[0]!]
       : bestWomen && bestMen
-        ? [bestWomen[0], bestMen[0], bestWomen[1], bestMen[1]]
+        ? [bestWomen[1], bestMen[1], bestWomen[0], bestMen[0]]
         : null;
     if (!members) return;
     if (allowedJumperIds && !members.every((m) => allowedJumperIds.has(jumperId(m)))) return;
